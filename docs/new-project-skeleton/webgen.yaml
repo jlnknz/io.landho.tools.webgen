@@ -1,0 +1,7 @@
+# Refer to config.default.yaml for exhaustive documentation and default values.
+# All values can be overriden.
+
+# >> General information
+# In this example, 'appName', 'appVersion', 'author' are obtained from package.json.
+
+rootUrl: 'https://landho.io/path'

@@ -1,0 +1,93 @@
+<!--
+**** start-content-config ****
+title:			Hello
+shortTitle:		Hi
+master:			master-example
+path:
+	fr:			/within-master-examples/multilang-with-master-fr.html
+	de:			/within-master-examples/de/multilang-with-master-de.html
+	en:			/within-master-examples/en/multilang-with-master-en.html
+more:
+	myCustomVar:	A simple string
+**** end-content-config ****
+-->
+<p>My content that is embedded in a master</p>
+
+<p>The rest of this document is a simple cut and paste from content-handlebars-example.hbs to demonstrate that all features also
+work if called within the content of a master.</p>
+
+<h2>Intro</h2>
+<p>Simple Handlebars content.</p>
+
+<p>If no YAML section defines the path, the same file name as the source will be used, and the
+	.hbs extension will be replaced with .html. Otherwise (like in this file), the paths definition
+	will be used.
+</p>
+
+<h2>Variables</h2>
+
+<ul>
+	<li>title: {{title}} - if none set, will be replaced with the file relative path</li>
+	<li>shortTitle: {{shortTitle}} - if none set, will be replaced with title</li>
+	<li>{{lang}}</li>
+	<li>{{reference}}</li>
+	<li>{{target}}</li>
+	<li>We can also define custom variables in the 'more' YAML array: {{more.myCustomVar}}. There is no sanitization
+		apart from the usual Handlebars HTML cleaning on these variables, be careful. One may use \{{{...}}} to
+		do something dirty.</li>
+</ul>
+
+<p>It is also possible to translate variables: <i18n>{{shortTitle}}</i18n>, {i18n {{shortTitle}} }</p>
+
+<h2>I18n</h2>
+
+<p><i18n>Hello</i18n>, {i18n Hello}</p>
+
+<p>Language labels:
+	{{get-language-label 'fr'}}
+	{{get-language-label 'fr' style='native'}}
+	{{get-language-label 'fr' style='short'}}
+	{{get-language-label 'fr' style='current'}}
+</p>
+
+<h2>Get titles</h2>
+
+<p>{{get-title "content-plain-html-multilang-paths.html" short=true }}</p>
+<p>{{get-title "content-plain-html-multilang-paths.html" short=false }}</p>
+<p>{{get-title "content-plain-html-multilang-paths.html" }}</p>
+<p>{{get-title "content-plain-html-multilang-paths.html" }}</p>
+
+<h2>Paths</h2>
+
+<p>href="{{get-path "content-plain-html-multilang-paths.html"}}"</p>
+<p>href="{{get-path "content-plain-html-multilang-paths.html" lang="de"}}"</p>
+<p>href="{{get-path "content-plain-html-multilang-paths.html" lang="fr"}}"</p>
+<p>href="{{get-path "content-plain-html-multilang-paths.html" lang="en"}}"</p>
+
+
+<h2>Menus</h2>
+
+<h3>Language switcher</h3>
+{{> language-switcher }}
+{{> language-switcher classes="language-switcher native" style='native' }}
+{{> language-switcher classes="language-switcher short" style='short' }}
+{{> language-switcher classes="language-switcher current" style='current' }}
+
+<h3>Menu defined in sitemap</h3>
+{{> menu which=menus.main }}
+{{> menu which=menus.main shortTitle=true expand="activeTrail" classes="main-menu short-title active-trail" }}
+{{> menu which=menus.main shortTitle=false expand="activeTrail" classes="main-menu active-trail" }}
+{{> menu which=menus.main shortTitle=false expand="never" classes="main-menu never-show-submenu" }}
+{{> menu which=menus.main shortTitle=false expand="always" classes="main-menu always-show-submenu" }}
+
+{{> menu which=menus.another-menu classes="another-menu" }}
+
+
+<h3>Submenus</h3>
+FIXME submenus are not working.
+{{> menu which=menus.submenus.main.level_2 shortTitle=true expand="activeTrail" classes="submenu"}}
+
+<h2>Debug</h2>
+
+<p>We can display raw JSON representations of objects for debugging: {{ json menus }}</p>
+

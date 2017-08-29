@@ -1,0 +1,13 @@
+/* DOCUMENTATION
+ *
+ * A simple CSS file, which is also linted as a SCSS file by our tool chain
+ *
+ * - qa:styles		warnings:
+ *					- we don't use // as comment
+ *					- we don't use variable for color value
+ * - styles:app		Compiles successfully
+ */
+body
+{
+	color: #f0f033;
+}

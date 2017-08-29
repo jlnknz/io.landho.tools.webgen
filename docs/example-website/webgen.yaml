@@ -1,0 +1,45 @@
+# Refer to config.default.yaml for exhaustive documentation and default values.
+# All values can be overriden.
+
+# >> General information
+# In this example, 'appName', 'appVersion', 'author' are obtained from package.json.
+
+rootUrl: 'https://landho.io/path'
+
+licenseTemplateFile: './misc/LICENSE.hbs'
+
+scripts:
+    sets:
+        app.js:
+            input:
+                - '**/*.ts'
+                - '**/*.js'
+        vendors.js:
+            input:
+                # - '**/*.ts'
+                - '**/*.js'
+            options:
+                noTransform: true
+                noLicense: true
+
+content:
+    sitemap:
+            main:
+                - 'content-welcome.hbs'
+                - 'content-handlebars-example.hbs':
+                    - 'content-plain-html-multilang-paths.html'
+                    - 'content-plain-html-no-problem.html'
+                    - 'content-plain-html-simple-yaml-header-with-i18n.html'
+                    - 'content-plain-html-errors.html'
+                    - 'content-plain-html-warnings.html'
+                    - 'content-markdown-simple-with-xmlsitemap-info.md'
+                - 'content-in-master-handlebars.hbs':
+                    - 'content-in-master-html.html'
+                    - 'content-in-master-markdown.md'
+            another-menu:
+                - 'content-plain-html-errors.html':
+                    - 'content-plain-html-no-problem.html'
+                - 'a-page-that-does-not-exist.html'
+                - 'content-plain-html-multilang-paths.html':
+                    - 'content-handlebars-example.hbs'
+                    - 'content-markdown-simple-with-xmlsitemap-info.md'

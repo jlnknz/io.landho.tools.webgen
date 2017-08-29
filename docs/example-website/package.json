@@ -1,0 +1,13 @@
+{
+  "name": "io.landho.tools.webgen.example-website",
+  "version": "v1.0.0",
+  "description": "An example project to be built with webgen",
+  "author": "Random User <random@test.example>",
+  "private": true,
+  "scripts": {
+    "postinstall": "./node_modules/.bin/bower install"
+  },
+  "devDependencies": {
+    "bower": "^1.8.0"
+  }
+}

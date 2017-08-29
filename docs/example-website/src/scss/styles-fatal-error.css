@@ -1,0 +1,7 @@
+/* DOCUMENTATION
+ * - qa:styles		Error: invalid CSS
+ * - styles:app		Does not compile successfully, not included in the final CSS aggregate
+ */
+my-test{bad-
+	test: 12;
+}

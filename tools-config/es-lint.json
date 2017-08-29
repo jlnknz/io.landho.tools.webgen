@@ -1,0 +1,15 @@
+{
+  "root": true,
+  "env": {
+	"browser": true,
+	"node": true,
+	"es6": true
+  },
+  "parserOptions": {
+	"sourceType": "module"
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+	"indent": ["error", "tab"]
+  }
+}

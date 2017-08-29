@@ -1,0 +1,11 @@
+// DOCUMENTATION
+// - qa:js			Errors (invalid js)
+// - scripts:app	Errors, code is corrected by linter and included in aggregated JS anyway
+//					but babel will fail to process the output
+
+'use strict'
+
+function javascriptFunctionWithError() {
+	var a = 42;
+	(
+}

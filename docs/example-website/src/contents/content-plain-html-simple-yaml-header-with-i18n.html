@@ -1,0 +1,58 @@
+<!--
+**** start-content-config ****
+title:			A title that can be referred to into handlebars contents
+path:           /html-examples/yaml-header-no-multilang-force-language-in-lang-attr.html
+**** end-content-config ****
+-->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<title>test</title>
+</head>
+<body>
+
+<h2>Simple text</h2>
+<p>Plain HTML content with YAML header that defines the target path.</p>
+<p>We cannot use title and shortTitle in plain HTML contents, but it still makes sense to set them such that
+	we can use the get-title handlebars helper from handlebars contents.</p>
+
+<h2>i18n</h2>
+<p>Translation (i18n) tests - everything is translated to German as we have '&lt;html lang="de"&gt;'. Usually the language
+is defined by the YAML section (path with more than one language), but as we don't specify a language in the YAML section,
+the language is autodetected. Note that if no language can be autodetected, the fallback language
+	(this.settings.i18n.fallbackLanguage) will be used.</p>
+<ul>
+	<li>Fully working translation, brace syntax: {i18n Hello}</li>
+	<li>Translation falling back to fallback language, XML syntax: <i18n>Hi</i18n></li>
+	<li>No translation available, brace syntax: {i18n Bye}</li>
+</ul>
+
+<p>We can also translate a string that is split on multiple lines:</p>
+
+<p><i18n>
+	line 1
+	line 2
+</i18n></p>
+
+<p>{i18n
+		line 1
+		line 2
+}</p>
+
+
+<h2>Typography</h2>
+<p>Many things are typographically constrained. For example the last word of a sentence should not be alone on a single line.</p>
+<p>Also, numbers and words should not be separated: 42 years should stay on the same line.</p>
+<p>Finally, a single letter cannot be left at the end of a line. So we force a single letter to be on next line.</p>
+<p>It is also possible to not apply typographic rules: "<no-typo>a b c d 42 years</no-typo>" vs. "a b c d 42 years"</p>
+<p>It can also span over multiple lines:
+<no-typo>
+	42 years
+
+	this is a test
+</no-typo>
+</p>
+<p>Note that the inside of HTML tags are not affected by typographic rules: <a b c d e f href="#">link</a></p>
+
+</body>
+</html>

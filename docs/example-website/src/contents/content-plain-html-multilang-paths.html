@@ -1,0 +1,35 @@
+<!--
+**** start-content-config ****
+title:			Hello
+shortTitle:		Hi
+path:
+	fr:			/html-examples/multilang-path-fr.html
+	de:			/html-examples/de/multilang-path-de.html
+	en:			/html-examples/en/multilang-path-en.html
+**** end-content-config ****
+-->
+<!DOCTYPE html>
+<html lang="{{lang}}" xml:lang="{{lang}}">
+<head>
+	<title>test</title>
+</head>
+<body>
+<h2>Simple text x</h2>
+<p>I18n still works: {i18n Hello}</p>
+
+<h2>Paths correction</h2>
+<ul>
+	<li><a href="../images/02-bunny.png">Paths are adapted if the target directory is not at the same level</a></li>
+	<li><a href="images/02-bunny.png">Therefore we don't have to think too much about paths if the resulting files are not at the same levels (e.g. /index-fr.html and /en/index-en.html(</a></li>
+	<li><a href="/images/02-bunny.png">Absolute paths are however left as-is, as expected</a></li>
+	<li><a href="http://www.landho.io/images/test.png">As are external links</a></li>
+</ul>
+
+<p>If there is no leading ../, it is assumed automatically as our constents/masters directories should not contain something else, and therefore accessing resources requires to traverse the parent directory.</p>
+
+<p>
+In fact, 2 attributes trigger these corrections: src and href, and we can use single and double quotes, or even no quote.:
+	Examples: src='../images/a.png', href="../images/a.png".
+</p>
+</body>
+</html>

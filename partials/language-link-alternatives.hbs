@@ -1,0 +1,3 @@
+{{~#foreach-language currentPath ~}}
+	<link rel="alternate" hreflang="{{lang}}" href="{{get-path ../currentPath lang=lang canonical=true}}" />
+{{/foreach-language}}

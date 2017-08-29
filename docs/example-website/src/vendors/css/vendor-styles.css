@@ -1,0 +1,7 @@
+/* DOCUMENTATION
+ * - styles:vendors		Compiles successfully, will be included in the final CSS aggregate. No linting.
+ */
+body.vendor
+{
+	color: yellow;
+}

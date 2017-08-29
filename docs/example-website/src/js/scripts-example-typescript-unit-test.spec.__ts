@@ -1,0 +1,9 @@
+// FIXME import in typescript still a mess. does not work. read ts doc
+// import expect = require('chai');
+// import { expect } from 'chai';
+
+suite('Hello function', () => {
+	test('should return hello world', () => {
+		expect('Hello' + ' World!').to.equal('Hello World!');
+	});
+});

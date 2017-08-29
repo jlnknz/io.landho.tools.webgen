@@ -1,0 +1,354 @@
+# Webgen configuration file
+#
+# Is gulp is not configuration-oriented. By I am.
+#
+# All paths are relative to the project configuration file, except if otherwise mentioned
+# output files are relative to the build path (typically ./build-dev/ if not in release mode)
+#
+# this is yaml, use spaces instead of tabs
+
+# ************************************************************************************************ #
+# >>
+# >> General information on the application
+# >>
+
+# The root url of the website, which will be used in canonical URLs, for example
+# Without trailing slash
+# rootUrl: 'https::/landho.io'
+
+# The name of the application. If a package.json exists and if the 'name' property is set, it will
+# be used in place of this setting. This field is mandatory.
+#
+# appName: 'Application name'
+
+# The version of the application. If a package.json exists and if the 'version' property is set, it will
+# be used in place of this setting. This field is mandatory.
+#
+# appVersion: 'v1.0.0'
+
+# The author of the application. If a package.json exists and if the 'author' property is set, it will
+# be used in place of this setting.
+#
+# author: 'My name <user@example.org>'
+
+# Path to the license to be included into styles, scripts and contents. This path is relative to the config.root.
+# If this is an handlebar template, you will be able to use the content of the configuration to
+# display user-friendly information. The content of the configuration object is accessible in the 'app' object
+#
+# licenseTemplateFile: './path/to/LICENSE.hbs'
+
+# You may add other fields to this configuration file for your convenience,
+# e.g. if you want to use variables in templates (e.g. license).
+
+# ************************************************************************************************ #
+# >>
+# >> Build target
+# >>
+
+# Path to the directory containing sources, relative to this configuration file
+sourcePathRoot: src/
+
+# Set the directory where to create the build, relative to this configuration file
+buildPathRoot: ./
+
+# If the build directory is outside of the directory containing the configuration file,
+# we must set the below setting to true to allow its deletion when cleaning.
+# WARNING: this is dangerous.
+buildDeleteOutsideOfConfigDir: false
+
+# ************************************************************************************************ #
+# >>
+# >> Hooks
+# >>
+
+# Hooks are used to inject more processing via your own class
+# Give the path to you classes that will be 'require'-d.
+# See include/HooksInterface.js for the description of the interface.
+# If more than one hook class is provided, they are executed in the order in which
+# these classes are defined here
+# If path starts with /, then relative to webgen tool directory. Otherwise, relative
+# to project source root.
+#
+# Example (single hook class):
+# hooks: './path/to/MyHooks.js'
+# Example (array):
+# hooks:
+#    - '/include/Hooks.js'
+#    - './path2/to/MySecondProcessor.js'
+#
+hooks: false
+
+# ************************************************************************************************ #
+# >>
+# >> Assets
+# >>
+
+assets:
+
+    # Which files to consider as assets
+    # Either a simple string or an array of strings. Values are node-globs.
+    # relative to sourcePathRoot
+    input:
+        - '**/*.{pdf,eot,woff,woff2,ttf,ico,mp4}'
+        - '**/.htaccess'
+        - '**/.keep'
+        - '**/robots.txt'
+        - '**/sitemap.xml'
+        - '**/google*.html'
+        - '**/BingSiteAuth.xml'
+
+
+# ************************************************************************************************ #
+# >>
+# >> Images
+# >>
+
+images:
+
+    # Which files to consider as images
+    # Either a simple string or an array of strings. Values are node-globs.
+    # Relative to sourcePathRoot
+    input:
+        - '**/*.{jpg,jpeg,png,gif,svg}'
+
+
+# ************************************************************************************************ #
+# >>
+# >> Styles
+# >>
+
+styles:
+
+    # Sets
+    # By defining sets, we specify which group of files should be processed and concatenated as a single output
+    # style file.
+    #
+    # For each set:
+    # - the key is the output filename
+    # - the value is an object consisting of:
+    #   - input: file matchers array defining which files should be taken as input
+    #   - watch: (optional) file matchers array defining which elements should be watched for changes and that would
+    #              trigger the regeneration of the set. If watch is not present, the value of input will be sued.
+    #   - options: (optional) an array of options. For now only the 'sassIncludePaths' property is supported. It
+    #              consists of an array of paths relative to the root of the project.
+    sets:
+        app.css:
+            input:
+                - '**/*.{scss,css}'
+                - '!**/_*.scss'
+                - '!contrib/**'
+            watch:
+                - '**/*.{scss,css}'
+                - '!contrib/**'
+            # options:
+            #   sassIncludePaths:
+            #       - 'path/relative/to/root/of/project/'
+            #       - 'a/second/path/to/include/'
+
+    filesToLint:
+        - '**/*.{scss,css}'
+
+    # Path to the configuration file of the styles linter
+    # Relative to toolsRoot if starts with / (built-in configuration), relative the directory of this configuration file
+    # otherwise
+    scssLintConfig: '/tools-config/scss-lint.yaml'
+
+
+# ************************************************************************************************ #
+# >>
+# >> Scripts
+# >>
+
+scripts:
+
+    # Sets
+    # By defining sets, we specify which group of files should be processed and concatenated as a single output
+    # script.
+    #
+    # The structure of sets follows the same logic as the one of styles sets above, except that we have two
+    # options: noTransform (which will tell to simply concat files without further transformation) and noLicense
+    # (which tells not to add our custom license)
+    #
+    # By default we exclude the contrib/ directory.
+    sets:
+        app.js:
+            input:
+                - '**/*.ts'
+                - '**/*.js'
+                - '!contrib/**'
+        #    watch:
+        #        # - '**/*.ts'
+        #        - '**/*.js'
+        #    options:
+        #        noTransform: false
+        #        noLicense: false
+
+    typeScriptFilesToLint:
+        - '**/*.ts'
+        - '!contrib/**'
+
+    javaScriptFilesToLint:
+        - '**/*.js'
+        - '!contrib/**'
+
+    # TypeScript and JavaScript unit tests file matcher
+    # Either a simple string or an array of strings. Values are node-globs.
+    # Relative to sourcePathRoot
+    unitTests:
+    #   - '**/*.spec.ts'
+        - '**/*.spec.js'
+
+    # Babel configuration file (this is the .babelrc file, but we store it somewhere else for consistency with
+    # other tools)
+    # Relative to toolsRoot if starts with / (built-in configuration), relative to the directory of this configuration
+    # file otherwise
+    # If a preset is used, it must be installed in the node_modules/ of the project using webgen
+    babelConfig: '/tools-config/babelrc.json'
+
+    # Path to the configuration file of the javascript linter
+    # Relative to toolsRoot if starts with / (built-in configuration), relative to the directory of this configuration
+    # file otherwise
+    jsLintConfig: '/tools-config/es-lint.json'
+
+    # Path to the configuration file of the typescript linter
+    # Relative to toolsRoot if starts with / (built-in configuration), relative to the directory of this configuration
+    # file otherwise
+    tsLintConfig: '/tools-config/ts-lint.json'
+
+    # Mocha test runner configuration
+    mochaConfig:
+
+        # Reporter
+        reporter: 'spec'
+
+        # Interface style
+        interface: 'tdd'
+
+
+# ************************************************************************************************ #
+# >>
+# >> Internationalization and Localization
+# >>
+
+i18n:
+
+    # This language will be assumed if no language is set in the content
+    fallbackLanguage: 'en'
+
+    # Source of the CSV file containing translations, relative to this configuration file
+    source: 'i18n.csv'
+
+    # Labels for language switcher menu
+    # You may for example want to add languages or reorder them
+    labels:
+
+        # Labels for the English language name
+        en:
+            # In English
+            en: 'English'
+
+            # In French
+            fr: 'Anglais'
+
+            # In German
+            de: 'Englisch'
+
+        # Labels for the French language name
+        fr:
+            en: 'French'
+            fr: 'Français'
+            de: 'Französisch'
+
+        # Labels for the German language name
+        de:
+            en: 'German'
+            fr: 'Allemand'
+            de: 'Deutsch'
+
+
+# ************************************************************************************************ #
+# >>
+# >> Contents
+# >>
+
+content:
+
+    # Which files are considered to be directory indexes?
+    directoryIndexPattern: 'index\.(html|php)$'
+
+    # Path to the configuration file of the HTML linter
+    # Relative to toolsRoot if starts with / (built-in configuration), relative to the directory of this configuration
+    # file otherwise
+    htmlLintConfig: '/tools-config/htmlhint.json'
+
+    # Minification configuration. Either relative to tools root if starting with / (built-in configuration),
+    # or relative to this configuration file otherwise
+    minifyHtmlConfig: '/tools-config/htmlmin.json'
+
+    # Which files are considered as templates, relative to sourcePathRoot + contents/
+    # Can be a simple string or an array of strings
+    # We support Handlebars and Markdown contents, and other content types can contain the special {{lang}} variable.
+    input:
+        - '*.hbs'
+        - '*.md'
+        - '*.html'
+        - '*.php'
+
+    # Partials-related settings
+    # Relative to toolsRoot if starts with / (built-in), relative to the sourcePathRoot otherwise.
+    partials:
+
+        # Partial used to generate menus
+        menu: '/partials/menu.hbs'
+
+        # Partial used to generate language switcher menu
+        language-switcher: '/partials/language-switcher.hbs'
+
+        # Partial used to generate <link> alternate list
+        language-link-alternatives: '/partials/language-link-alternatives.hbs'
+
+    # Definition of the website sitemap
+    # This section defines the different menus that can be used
+    sitemap:
+
+        # Example menu consisting of a hierarchy of contents
+        # Paths are relative to content root
+        #
+        # main:
+        #       - 'page1.html'
+        #       - 'page2.hbs':
+        #            - 'page3.hbs'
+        #                - 'page4.hbs'
+        #                - 'page5.md':
+        #                    - 'page6.html'
+
+    # Sitemap XML defaults
+    # See https://www.sitemaps.org/protocol.html
+    xmlsitemap:
+
+        # auto | 1.0 .. 0.0
+        defaultPriority: auto
+
+        # auto|always|hourly|daily|weekly|monthly|yearly|never
+        defaultChangeFrequency: auto
+
+
+# ************************************************************************************************ #
+# >>
+# >> BrowserSync
+# >>
+
+# This configuration structure matches the one expected by BrowserSync's documentation.
+# If no setting is set, BrowserSync will launch a server pointing to the dev build path
+#
+# See https://www.browsersync.io/docs/options/
+#
+# To completely disable BrowserSync, set 'browserSync' to false
+
+# browserSync:
+
+#   # Attach to Apache process: set 'server' to false and set 'proxy' to the appropriate value.
+#   proxy: 'localhost:8080'
+
+#   # change the start path (defaults to /)
+#   startPath: my-app.html

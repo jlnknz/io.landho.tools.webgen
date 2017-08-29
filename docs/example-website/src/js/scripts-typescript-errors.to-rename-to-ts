@@ -1,0 +1,10 @@
+// DOCUMENTATION
+// - qa:js			Errors
+// - scripts:app	Errors, concatenated in aggregated JS anyway (transpiler attempts to remove faulty excerpts),
+//					but babel will fail to process the output
+
+class FaultyTypescriptClass {
+	constructor(public msg: string) { }
+	public myFaultyTypescriptMethod((((((((((((
+
+}

@@ -1,0 +1,21 @@
+{{!--
+Partial parameters:
+- which=<context-of-menu>
+- shortTitle=true | false
+- expand= never | activeTrail | always*
+- classes=" ... "
+
+The @root context refers to the content context of the file currently being processed,
+so we can use it to infer the current language.
+--}}
+{{~#if which~}}
+	<ul{{#if classes}} class="{{classes}}"{{/if}}>
+	{{~#each which~}}
+		<li{{get-menu-item-classes @first @last @root.currentPath id children}}><a
+				href="{{get-path id lang=@root.lang}}">{{get-title id short=../shortTitle context=@root}}</a>
+			{{~#if-must-expand-menu ../expand children @root.currentPath id~}}
+				{{>menu @root which=children shortTitle=../shortTitle expand=../expand}}
+			{{/if-must-expand-menu}}</li>
+	{{/each}}
+	</ul>
+{{/if}}

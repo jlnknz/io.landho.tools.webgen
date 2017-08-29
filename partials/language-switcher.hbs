@@ -1,0 +1,16 @@
+{{!--
+Parameters:
+- classes="..."
+- style=native* | current | short
+
+The order of languages is defined by order of path definitions in the YAML section of contents
+--}}
+{{~#foreach-language currentPath ~}}
+	{{~#if first~}}
+		<ul{{#if classes}} class="{{classes}}"{{/if}}>
+	{{/if}}
+		<li><a hreflang="{{lang}}" href="{{get-path ../currentPath lang=lang}}">{{get-language-label lang style=../style context=..}}</a></li>
+	{{~#if last~}}
+		</ul>
+	{{/if}}
+{{/foreach-language}}

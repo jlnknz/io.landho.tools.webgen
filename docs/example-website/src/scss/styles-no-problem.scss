@@ -1,0 +1,38 @@
+// DOCUMENTATION
+// - qa:styles		Does not trigger warnings
+// - styles:app		Compiles successfully, will be included in the final CSS aggregate
+
+@import 'import';
+
+$c: rgb(100, 200, 210);
+$d: rgb(0, 0, 42);
+$e: rgb(150, 150, 251);
+
+body
+{
+	font-family: monospace;
+	background: $d;
+
+	a
+	{
+		color: $d;
+		font-size: 22px;
+		transition: 42s;
+		background: url('../images/04-bunny.gif');
+	}
+}
+
+#test2
+{
+	background: url('../images/02-bunny.png');
+}
+
+#content
+{
+	background: $e;
+}
+
+#test
+{
+	background: url('../images/03-bunny.svg');
+}

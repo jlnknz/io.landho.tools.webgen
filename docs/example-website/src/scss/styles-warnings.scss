@@ -1,0 +1,10 @@
+// DOCUMENTATION
+// - qa:styles		Warnings:
+//					- bad codes styles
+//					- non-conforming syntax elements
+// - styles:app		Compiles successfully, will be included in the final CSS aggregate
+.this-is-a-class-with-bad-formatting-of-sources{
+	color: cyan;
+		font-size: yellow;
+	unknown-poperty: 42; margin: 0pt;
+}
