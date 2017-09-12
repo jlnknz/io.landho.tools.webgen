@@ -78,7 +78,7 @@ class PathHelper {
 				(file) =>
 				{
 					// href|src + = + quote + link + quote
-					let linkPattern = /((src|href)=)("|')((?!(mailto:|\/\/:|\/|https?:\/\/))[^\3]*?)\3/gm;
+					let linkPattern = /((src|href)=)("|')((?!(mailto:|\/\/:|\/|#|https?:\/\/))[^\3]*?)\3/gm;
 					// start counting at 1 (0 is the full match)
 					let matches = {
 						prefix: 1,
