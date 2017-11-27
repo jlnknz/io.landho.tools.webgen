@@ -109,6 +109,10 @@ class I18nHelper {
 	/**
 	 * Build the i18n source file (CSV) out of extracted strings
 	 *
+	 * FIXME if a string has been removed and the i18n strings are extracted again, then we lose this string.
+	 * FIXME that may not be wanted, i.e. user may extract again later with again this string in the contents,
+	 * FIXME and whishes to keep the translation.
+	 * 
 	 * @param extractedStrings
 	 */
 	buildI18nSourceFileProcessor(extractedStrings)
@@ -117,7 +121,8 @@ class I18nHelper {
 			.pipe(tap,
 				(file) =>
 				{
-					extractedStrings = Object.values(extractedStrings);
+					extractedStrings = Object.keys(extractedStrings).map((key) => extractedStrings[key]);
+
 					let all = [];
 					if (extractedStrings.length) {
 						// header
@@ -126,7 +131,7 @@ class I18nHelper {
 						// values
 						extractedStrings.map((v) =>
 						{
-							let values = Object.values(v);
+							let values = Object.keys(v).map((key) => v[key]);
 							let row = values.slice(0,values.length - this.validLanguages.length);
 							this.validLanguages.map((w) =>
 							{
