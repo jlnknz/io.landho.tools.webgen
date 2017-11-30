@@ -6,7 +6,7 @@ import * as testimport from 'gulp'; // and babel-ize
 
 var JavaScriptToBabel = {
 
-	msg: "World!",
+	msg: "World!!",
 
 	hello: function ()
 	{

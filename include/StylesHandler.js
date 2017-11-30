@@ -8,6 +8,8 @@
  * Load module dependencies.
  */
 const gulp = require('gulp');
+const gutil = require('gulp-util');
+const plumber = require('gulp-plumber');
 const path = require('path');
 const sourcemaps = require('gulp-sourcemaps');
 const sass = require('gulp-sass');
@@ -17,13 +19,10 @@ const concat = require('gulp-concat');
 const rename = require('gulp-rename');
 const tap = require('gulp-tap');
 const scssLint = require('gulp-scss-lint');
-const fs = require('fs');
 const del = require('del');
 const cleanCss = require('gulp-clean-css');
 const exec = require('child_process').exec;
 const noop = require('gulp-util').noop;
-const cache = require('gulp-cached');
-const remember = require('gulp-remember');
 const Utils = require('./Utils');
 const PathHelper = require('./PathHelper');
 
@@ -106,8 +105,7 @@ class StylesHandler {
 			{
 				return new Promise((resolve) =>
 				{
-					return this.process(set)
-						.on('end', resolve());
+					return this.process(set, resolve);
 				});
 			}
 		);
@@ -124,8 +122,7 @@ class StylesHandler {
 				return new Promise((resolve) =>
 				{
 					return gulp.src(set.input)
-
-						.pipe(cache('lint-styles:' + set.output))
+						.on('end', resolve)
 						.pipe(scssLint(
 							{
 								config: (this.settings.styles.scssLintConfig.startsWith('/')
@@ -135,8 +132,7 @@ class StylesHandler {
 									this.settings.root + '/' + this.settings.styles.scssLintConfig)
 							}
 						))
-						.pipe(scssLint.failReporter())
-						.on('end', resolve());
+						.pipe(scssLint.failReporter('E'));
 				});
 			}
 		);
@@ -145,10 +141,8 @@ class StylesHandler {
 	/**
 	 * Process an SCSS stream of files
 	 *
-	 * FIXME cache / remember is broken - we may want to watch files that are imported (such as _reset.scss),
-	 * FIXME so we cannot cache.
 	 */
-	process(set)
+	process(set, resolve)
 	{
 		let inputFilesMatchers = set.input;
 		let outputFilename = set.output;
@@ -165,8 +159,17 @@ class StylesHandler {
 		return del(toRemove)
 			.then(() =>
 			{
+				gutil.log(gutil.colors.magenta('[styles]'), 'Updating...');
 				return gulp.src(inputFilesMatchers)
-				//	.pipe(cache('styles'))
+					.on('end', () =>
+					{
+						// because process() is not a task, no automatic display of what we are doing.
+						gutil.log(gutil.colors.magenta('[styles]'), 'done.');
+						if (resolve) {
+							resolve();
+						}
+					})
+					.pipe(plumber())
 					.pipe(this.utils.runHooks('beforeStylesProcessing')())
 					// Initialize source maps
 					.pipe(!this.settings.isRelease ? sourcemaps.init() : noop())
@@ -179,8 +182,6 @@ class StylesHandler {
 					}))
 					// Add CSS prefixes for reasonably recent browsers
 					.pipe(autoprefixer())
-					// remember
-					//	.pipe(remember('styles'))
 					// Concatenate all CSS files
 					.pipe(concat(outputFilename))
 					// fix paths
@@ -197,7 +198,7 @@ class StylesHandler {
 						{
 							if (this.settings.licenseTemplateFile
 								&& this.settings.isRelease
-								&& outputFilename != this.settings.styles.outputFilenameVendors
+								&& outputFilename !== this.settings.styles.outputFilenameVendors
 							) { // don't add our license to vendor css)
 								let input = file.contents.toString();
 								let l = this.utils.getLicense("/*\n", "\n */\n", ' * ', file);
@@ -207,7 +208,9 @@ class StylesHandler {
 						}
 					))
 					.pipe(this.utils.runHooks('afterStylesProcessing')())
-					.pipe(gulp.dest(this.settings.buildPath));
+					.pipe(gulp.dest(this.settings.buildPath))
+
+
 			});
 	}
 

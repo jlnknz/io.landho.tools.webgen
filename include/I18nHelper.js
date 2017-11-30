@@ -112,7 +112,7 @@ class I18nHelper {
 	 * FIXME if a string has been removed and the i18n strings are extracted again, then we lose this string.
 	 * FIXME that may not be wanted, i.e. user may extract again later with again this string in the contents,
 	 * FIXME and whishes to keep the translation.
-	 * 
+	 *
 	 * @param extractedStrings
 	 */
 	buildI18nSourceFileProcessor(extractedStrings)
@@ -257,16 +257,6 @@ class I18nHelper {
 			)
 		});
 		file.contents = new Buffer(input);
-	}
-
-	/**
-	 * Normalize a translatable string: remove leading/trailing spaces, and duplicate spaces in the string.
-	 */
-	static _normalizeI18nString(str)
-	{
-		return str.replace(/\s+/gm, ' ')
-			.replace(/^\s+/, '')
-			.replace(/\s+$/, '');
 	}
 
 	/**

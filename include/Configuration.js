@@ -138,6 +138,9 @@ class Configuration {
 		}
 
 		// merge default and custom configs
+		// FIXME recursive merging leads to properties of the default config to be found in the custom config
+		// FIXME when it should not be. For example: i18n.labels - if we add a new language and remote 'de',
+		// FIXME 'de' will still be present in the custom config, which is wrong.
 		customConf = merge.recursive(true, defaultConf, customConf);
 
 		// different roots:
@@ -160,6 +163,10 @@ class Configuration {
 		// some files might not be monitored, so let's create a new file pattern to enable watching them
 		customConf.additionallyWatchedFiles = [];
 		customConf.additionallyWatchedFiles.push(customConf.sourceRoot + 'masters/*.hbs');
+		if (customConf.licenseTemplateFile) {
+			customConf.additionallyWatchedFiles.push(customConf.sourceRoot + customConf.licenseTemplateFile);
+			// FIXME watching the file won't reload the content of licenseText
+		}
 		if (customConf.i18n.source) {
 			customConf.i18n.source = customConf.root + customConf.i18n.source;
 			customConf.additionallyWatchedFiles.push(customConf.i18n.source);
@@ -233,8 +240,10 @@ class Configuration {
 								if (Object.getOwnPropertyNames(hook).length > 0) {
 									return hook;
 								}
+								else {
+									Utils.warn(hook, c, 'Not valid (non existing file or not a valid object?).');
+								}
 							}
-							Utils.warn(hook, c, 'Not valid (non existing file or not a valid object?).');
 							return null;
 						})
 						.filter((item) => item !== null);

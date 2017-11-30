@@ -52,6 +52,7 @@
     "merge": "^1.2.0",
     "minimist": "^1.2.0",
     "node-glob": "^1.2.0",
+    "npm-check-updates": "^2.13.0",
     "path": "^0.12.7",
     "run-sequence": "^2.2.0",
     "stream": "0.0.2",

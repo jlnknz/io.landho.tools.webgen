@@ -8,11 +8,9 @@
  * Load module dependencies
  */
 const gulp = require('gulp');
+const plumber = require('gulp-plumber');
 const imagemin = require('gulp-imagemin');
-const pngquant = require('imagemin-pngquant');
 const lazypipe = require('lazypipe');
-const noop = require('gulp-util').noop;
-const cache = require('gulp-cached');
 const Utils = require('./Utils');
 
 /**
@@ -47,7 +45,7 @@ class ImagesHandler {
 	process()
 	{
 		return gulp.src(this.settings.images.input)
-			.pipe(cache('images'))
+			.pipe(plumber())
 			.pipe(this.utils.runHooks('beforeImagesProcessing')())
 			.pipe((this._pipeImages())())
 			.pipe(this.utils.runHooks('afterImagesProcessing')())
@@ -64,12 +62,27 @@ class ImagesHandler {
 	_pipeImages()
 	{
 		return lazypipe()
-			.pipe(imagemin, {
-				progressive: true,
-				use: [pngquant()],
-				optimizationLevel: 5,
-				interlaced: true
-			});
+			.pipe(imagemin,
+				[
+					// FIXME make configurable in webgen.yaml? all lossless, so not really required.
+					imagemin.gifsicle({
+						interlaced: true,
+						optimizationLevel: 3
+					}),
+					imagemin.jpegtran({
+						progressive: true
+					}),
+					imagemin.optipng({
+						optimizationLevel: 5
+					}),
+					imagemin.svgo({
+						plugins: [{removeViewBox: true}]
+					})
+				],
+				{
+					verbose: true
+				}
+			);
 	}
 
 }

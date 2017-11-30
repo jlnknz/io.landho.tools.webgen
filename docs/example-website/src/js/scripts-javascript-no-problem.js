@@ -8,7 +8,7 @@ var JavaScriptNoProblem = {
 
 	hello: function ()
 	{
-		return 'Hello World :-)';
+		return 'Hello World :-)  ';
 	}
 
 };

@@ -2,5 +2,5 @@ source file (first match),comment,en,fr,de
 masters/master-example.hbs,,"Hello","",""
 contents/feature-i18n.md,,"I18n features","",""
 contents/feature-i18n.md,,"Hi","",""
-contents/feature-i18n.md,,"line 1 line 2","",""
+contents/feature-i18n.md,,"line 1 line 2","a",""
 contents/feature-i18n.md,,"Bye","",""

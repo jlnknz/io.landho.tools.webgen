@@ -8,8 +8,6 @@
  * Load module dependencies
  */
 const del = require('del');
-const cache = require('gulp-cached');
-const remember = require('gulp-remember');
 const Utils = require('./Utils');
 
 /**
@@ -60,15 +58,6 @@ class Cleaner {
 			});
 	}
 
-	/**
-	 * Clean all caches. Next task running will then regenerate the application completely.
-	 */
-	cleanCaches()
-	{
-		cache.caches = {};
-		remember.forgetAll('styles');
-		remember.forgetAll('scripts');
-	}
 }
 
 /**

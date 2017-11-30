@@ -93,7 +93,7 @@ https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubunt
 
 Update used version sometimes. 
 
-Works with node 6.9.4
+Works with node v9.2.0.
 
 ### Update all packages to their latest versions? 
 
@@ -130,14 +130,10 @@ ncu -u
 - make script defer/async more flexible by adding an option into scripts.sets[x].options
 		-> should set absolute path!
 
-- cache / remember is broken in styles / scripts
-	because we need to watch imported files (such as _reset.scss)
-
 - to check: browserify: have to change to directory of currently analysed file, otherwise
   references to other files are broken. is that okk to chdir()?
   			- sometimes chdir() in browserify makes everything fail 
   		
-  
 - work on typescript - for now all is disabled.
 
 - Add 'repository' entry in package.json
@@ -198,3 +194,46 @@ content, and then move the tags back in place. Can be quite slow, but the result
 	- biggest issue: make contents easily editable
 	- this is another project, perhaps using this one.
 	
+	
+# issues
+- modify misc/LICENSE.hbs -> crash
+		even if does not crash, will not be reloaded (?). To check.
+		
+- what should linter do? fail and crash, or fail and succeed. For now:
+scss: fail if error
+
+
+
+
+
+------
+watch/ edit master-example.hbs - trigger rebuild by watch 
+---> 
+events.js:136
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: watch /home/jlnknz/Workspace/io.landho.tools.webgen/docs/example-website/build-dev/features ENOENT
+    at _errnoException (util.js:1031:13)
+    at FSWatcher.start (fs.js:1397:19)
+    at Object.fs.watch (fs.js:1423:11)
+    at Gaze._watchDir (/home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/gaze.js:289:30)
+    at /home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/gaze.js:358:10
+    at iterate (/home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/helper.js:52:5)
+    at /home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/helper.js:61:11
+    at /home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/gaze.js:420:5
+    at iterate (/home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/helper.js:52:5)
+    at /home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/helper.js:61:11
+    at /home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/gaze.js:420:5
+    at iterate (/home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/helper.js:52:5)
+    at /home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/helper.js:61:11
+    at /home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/gaze.js:420:5
+    at iterate (/home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/helper.js:52:5)
+    at /home/jlnknz/Workspace/io.landho.tools.webgen/node_modules/gaze/lib/helper.js:61:11
+
+
+-------------------------------------------
+hooks implementation to check. to sure it works
+
+-------------
+scripts does not work. related to ts?

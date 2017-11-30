@@ -8,7 +8,7 @@
  * Load module dependencies
  */
 const gulp = require('gulp');
-const fs = require('fs');
+const plumber = require('gulp-plumber');
 const path = require('path');
 const del = require('del');
 const lazypipe = require('lazypipe');
@@ -22,8 +22,6 @@ const tslint = require('gulp-tslint');
 const through2 = require('through2').obj;
 const eslint = require('gulp-eslint');
 const noop = require('gulp-util').noop;
-const cache = require('gulp-cached');
-const remember = require('gulp-remember');
 const browserify = require('browserify');
 const intoStream = require('into-stream');
 const mocha = require('gulp-mocha');
@@ -152,7 +150,7 @@ class ScriptsHandler {
 			.then(() =>
 			{
 				return gulp.src(inputFilesMatchers)
-					.pipe(cache('scripts:' + outputFilename))
+					.pipe(plumber())
 					.pipe(!this.settings.isRelease ? sourcemaps.init() : noop())
 					// and then handle javascript
 					.pipe(this._processJavascript(outputFilename, options)())
@@ -183,7 +181,6 @@ class ScriptsHandler {
 	lintTypeScript()
 	{
 		return gulp.src(this.settings.scripts.typeScriptFilesToLint)
-			.pipe(cache('lint-app-typescripts'))
 			.pipe(tslint({
 				configuration: this.settings.scripts.tsLintConfig.startsWith('/')
 					? this.settings.toolsRoot + this.settings.scripts.tsLintConfig
@@ -204,7 +201,6 @@ class ScriptsHandler {
 	lintJavaScript()
 	{
 		return gulp.src(this.settings.scripts.javaScriptFilesToLint)
-			.pipe(cache('lint-app-javascripts'))
 			.pipe(eslint({
 				configFile: this.settings.scripts.jsLintConfig.startsWith('/')
 					? this.settings.toolsRoot + this.settings.scripts.jsLintConfig
@@ -233,11 +229,11 @@ class ScriptsHandler {
 		};
 		return gulp.src(this.settings.scripts.unitTests)
 		// FIXME does not work for now
-		/*.pipe(typescript({
+	/*	.pipe(typescript({
 		 noImplicitAny: true,
 		 target: "es6",
 		 allowJs: true
-		 }))*/
+		 })) */
 			.pipe(mocha(config));
 	}
 
@@ -247,8 +243,6 @@ class ScriptsHandler {
 	_processJavascript(outputFilename, options)
 	{
 		return lazypipe()
-		// remember
-			.pipe(remember, 'scripts:' + outputFilename)
 			.pipe(this.utils.runHooks('beforeJavaScriptProcessing'))
 			// concat all javascript files
 			.pipe(concat, outputFilename)
@@ -272,16 +266,19 @@ class ScriptsHandler {
 									}
 								)
 									.plugin(tsify, // FIXME is that ok to transpile even though we have js as input? to check.
-										{target: 'es6'}
+										{
+											noImplicitAny: true,
+											target: 'es6'
+										}
 									)
-									.transform('babelify',
-										require(
-											this.settings.scripts.babelConfig.startsWith('/')
-												? this.settings.toolsRoot + this.settings.scripts.babelConfig
-												: this.settings.root + '/' + this.settings.scripts.babelConfig
-										)
-									)
-									// FIXME tsify
+									/*	.transform('babelify',
+									 require(
+									 this.settings.scripts.babelConfig.startsWith('/')
+									 ? this.settings.toolsRoot + this.settings.scripts.babelConfig
+									 : this.settings.root + '/' + this.settings.scripts.babelConfig
+									 )
+									 )
+									 */
 									.bundle((err, res) =>
 									{
 										if (err) {

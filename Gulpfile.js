@@ -8,6 +8,11 @@
  * discovered by the script (see include/Configuration.js).
  *
  * The behavior of this script is documented in `gulp help`
+ *
+ *
+ * FIXME watch does not detect new & deleted files if they are absolute / start with ./
+ * See https://stackoverflow.com/questions/22391527/gulps-gulp-watch-not-triggered-for-new-or-deleted-files
+ * And then try to rename,add,delete files, e.g. for assets, images,
  */
 
 'use strict';
@@ -16,7 +21,6 @@
  * Load modules
  */
 const gulp = require('gulp');
-const path = require('path');
 const runSequence = require('run-sequence');
 const Configuration = require('./include/Configuration');
 const Utils = require('./include/Utils');
@@ -100,18 +104,11 @@ class WebGenGulp {
 
 
 		// Cleaning
-		gulp.task('clean:caches', (c) =>
-		{
-			this.cleaner.cleanCaches();
-			c();
-		});
 		gulp.task('clean:build-dir', (c) =>
 		{
-			this.configCallbacksReady.then(() =>
-				this.cleaner.cleanBuildDir().then(() => c())
-			)
+			return this.configCallbacksReady.then(() => this.cleaner.cleanBuildDir());
 		});
-		gulp.task('clean', ['clean:build-dir', 'clean:caches']);
+		gulp.task('clean', ['clean:build-dir']);
 
 
 		// extract i18n strings
@@ -198,7 +195,7 @@ class WebGenGulp {
 				runSequence(
 					['config:release'],
 		// FIXME fails sequence even if no error			['qa'],
-					['build']
+			 		['build']
 				)
 			})
 		);
@@ -220,29 +217,36 @@ class WebGenGulp {
 		);
 
 		// Watching of build tasks
+		// FIXME quite buggy, but let's wait for gulp 4 before refactoring.
 		gulp.task(
 			'watch:build',
 			['build'],
 			() => this.configCallbacksReady.then(() =>
 			{
+				// FIXME not triggered if newfile, but ok if delete OR modif
+				// if create directory -> ok, if delete dir, not ok
+				// if delete directory full of files, not ok
 				gulp.watch(this.config.settings.buildPath + '/**').on('change', () => this.utils.reloadBrowserOnChange());
-
 				// exit if we modify the configuration file
 				gulp.watch(this.config.source,
 					(event) =>
 					{
+						console.log('whaaa');
 						// apparently if directories are created in the build directory, this watch is triggered.
 						// FIXME I don't understand why
 						if (event.type === 'changed') {
 							Utils.die("The configuration file has been modified. Exiting watch task.");
+
 						}
 					}
 				);
 
 				// assets and images
 				// does not delete existing files, which is acceptable
-				gulp.watch(this.config.settings.images.input, ['images']);
+				// FIXME does not work: add new file
+				// 		works: rename, delete (but does not remove), add dir
 				gulp.watch(this.config.settings.assets.input, ['assets']);
+				gulp.watch(this.config.settings.images.input, ['images']);
 
 				// styles
 				// by creating one watch per set, we avoid having to re-compile all styles every time we change
@@ -255,6 +259,7 @@ class WebGenGulp {
 				// same logic as for styles
 				this.scripts.doOnAllSets((set) =>
 				{
+					console.log(set.watch);
 					gulp.watch(set.watch, () => this.scripts.process(set));
 				});
 
@@ -264,21 +269,20 @@ class WebGenGulp {
 				// watch additional files and rebuild everything if they are touched
 				gulp.watch(this.config.settings.additionallyWatchedFiles, (event) =>
 					{
+						console.log('restart');
 						// apparently if directories are created in the build directory, this watch is triggered.
 						// FIXME I don't understand why
 						// same problem as above when watching config file
 						if (event.type === 'changed') {
 							return runSequence(
-								['clean'],
+								['clean:build-dir'], // FIXME clean makes things fail. Try with simpler task.
+								// or try to wait for a few seconds before resolve. but i think it's rather caused by promise returning troo early
 								['build']
 							);
 						}
 					}
 				);
 			})
-
-			// FIXME if I add or remove any file, I should rebuild everything.
-			// FIXME or is that already handled by my other filters? - to test
 		);
 
 		// Open a browser-sync-enabled server

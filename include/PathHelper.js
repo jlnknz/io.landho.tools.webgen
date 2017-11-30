@@ -90,7 +90,7 @@ class PathHelper {
 					file.contents = new Buffer(input);
 
 					// without quotes (also valid HTML5)
-					// FIXME does not work without quotes
+					// FIXME does not work without quotes (which is HTML5-valid)
 					/*linkPattern = /((src|href)=)(?!('|"))((?!(mailto:|\/\/:|\/|https?:\/\/))[^\s]*?)/gm;
 					// start counting at 1 (0 is the full match)
 					matches = {

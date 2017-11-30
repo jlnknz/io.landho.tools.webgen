@@ -8,6 +8,7 @@
  * Load module dependencies
  */
 const handlebars = require('handlebars');
+const plumber = require('gulp-plumber');
 const fs = require('fs');
 const YAML = require('yamljs');
 const gulp = require('gulp');
@@ -22,8 +23,6 @@ const prettify = require('gulp-prettify');
 const htmlhint = require('gulp-htmlhint');
 const htmlmin = require('gulp-htmlmin');
 const through2 = require('through2').obj;
-const noop = require('gulp-util').noop;
-const cache = require('gulp-cached');
 const Utils = require('./Utils');
 const PathHelper = require('./PathHelper');
 const I18nHelper = require('./I18nHelper');
@@ -137,8 +136,8 @@ class ContentsHandler {
 	processContents()
 	{
 		return gulp.src(this.settings.content.input)
+			.pipe(plumber())
 			.pipe((this.pathHelper.demuxProcessor())())
-			.pipe(cache('contents'))
 			.pipe((this._getTemplateProcessor())())
 			.pipe((this._getHtmlProcessor())())
 			.pipe(gulp.dest(this.settings.buildPath));
@@ -155,7 +154,6 @@ class ContentsHandler {
 	{
 		return gulp.src(this.settings.content.input)
 			.pipe((this.pathHelper.demuxProcessor())())
-			.pipe(cache('lint-contents'))
 			.pipe((this._getTemplateProcessor())())
 			.pipe((this._getLintHtmlProcessor())());
 	}
@@ -179,6 +177,7 @@ class ContentsHandler {
 		let p = new Promise((resolve) =>
 		{
 			gulp.src(input)
+				.pipe(plumber())
 				.pipe(this.i18nHelper.extractI18nProcessor(extractedStrings)())
 				.on('end', resolve);
 		});
@@ -197,7 +196,6 @@ class ContentsHandler {
 	{
 		if (this.settings.content.xmlsitemap) {
 			return Utils.createEmptyStream('sitemap.xml')
-				.pipe(cache('sitemapxml'))
 				.pipe(this.xmlSitemapHelper.getXmlSitemapProcessor(this.baseContext.contents)())
 				.pipe(this._getXmlLicenseProcessor()())
 				.pipe(gulp.dest(this.settings.buildPath));
@@ -246,11 +244,11 @@ class ContentsHandler {
 						let l = this.utils.getLicense("<!--\n", "\n-->", ' * ', file);
 						input = l + input;
 						// the DOCTYPE or XML declaration may not be the first line anymore, so let's fix that.
-						let doctypePattern = /(<!DOCTYPE[^>]+>|<\?xml.+?\?>)/m;
-						let match = doctypePattern.exec(input);
+						let docTypePattern = /(<!DOCTYPE[^>]+>|<\?xml.+?\?>)/m;
+						let match = docTypePattern.exec(input);
 						if (match) {
 							if (!input.startsWith(match[1])) {
-								input = match[1] + "\n" + input.replace(doctypePattern, '');
+								input = match[1] + "\n" + input.replace(docTypePattern, '');
 							}
 						}
 						file.contents = new Buffer(input);
@@ -281,7 +279,7 @@ class ContentsHandler {
 				() =>
 				{
 					return gulpIf(
-						(this.settings.isRelease) && (this.settings.content.minifyHtmlConfig != false),
+						(this.settings.isRelease) && (this.settings.content.minifyHtmlConfig !== false),
 						htmlmin(require(this.settings.content.minifyHtmlConfig))
 					);
 				})
@@ -491,6 +489,7 @@ class ContentsHandler {
 							resolve(baseCtx);
 						}
 					)
+					.pipe(plumber())
 					.pipe(through2(
 						(file, enc, cb) =>
 						{
@@ -706,7 +705,7 @@ class ContentsHandler {
 		// Get helper class names for menu items
 		// Used by menu.hbs partial
 		handlebars.registerHelper('get-menu-item-classes',
-			(isFirst, isLast, currentPath, itemPath, children, options) =>
+			(isFirst, isLast, currentPath, itemPath, children) =>
 			{
 				currentPath = this._getSourcePath(currentPath);
 
@@ -952,7 +951,7 @@ class ContentsHandler {
 					this.htmlReplaceOptions[sid].tpl = '<link href="../%s" rel="stylesheet" />';
 				}
 				else {
-					Utils.assert(1 == 0, `Provided |${s}| set is not either JavaScript or CSS`);
+					Utils.assert(false, `Provided |${s}| set is not either JavaScript or CSS`);
 				}
 			}
 		}
@@ -966,4 +965,3 @@ class ContentsHandler {
  * @type {ContentsHandler}
  */
 module.exports = ContentsHandler;
-

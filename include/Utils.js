@@ -8,7 +8,6 @@
  * Load module dependencies
  */
 const lazypipe = require('lazypipe');
-const filter = require('gulp-filter');
 const stream = require('stream');
 const gutil = require('gulp-util');
 const noop = gutil.noop;
@@ -28,7 +27,7 @@ const promisesHooks = [
 /**
  * Minimum time between browser reloads
  */
-const BROWSER_RELOAD_FREQUENCY = 400;
+const BROWSER_RELOAD_FREQUENCY = 800;
 
 /**
  * Module providing utilities.
@@ -168,11 +167,13 @@ class Utils {
 		}
 
 		if (isLazyPipe) {
+			console.log('return lazypipe', name);
 			return ret;
 		}
 		else {
 			return () =>
 			{
+				console.log('return promise', name);
 				initialResolve();
 				return ret;
 			};

@@ -5,8 +5,8 @@
 @import 'import';
 
 $c: rgb(100, 200, 210);
-$d: rgb(0, 0, 42);
-$e: rgb(150, 150, 251);
+$d: rgb(91, 120, 231);
+$e: rgb(150, 150, 253);
 
 body
 {
@@ -15,10 +15,9 @@ body
 
 	a
 	{
-		color: $d;
+		color: $c;
 		font-size: 22px;
 		transition: 42s;
-		background: url('../images/04-bunny.gif');
 	}
 }
 

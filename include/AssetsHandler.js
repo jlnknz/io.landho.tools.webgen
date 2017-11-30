@@ -11,9 +11,8 @@
  * Load module dependencies
  */
 const gulp = require('gulp');
-const noop = require('gulp-util').noop;
+const plumber = require('gulp-plumber');
 const Utils = require('./Utils');
-const cache = require('gulp-cached');
 
 /**
  * Module responsible for handling assets (i.e. files that must be copied as-is)
@@ -47,7 +46,7 @@ class AssetsHandler {
 	copy()
 	{
 		return gulp.src(this.settings.assets.input)
-			.pipe(cache('assets'))
+			.pipe(plumber())
 			.pipe((this.utils.runHooks('beforeCopyAssets'))())
 			.pipe(gulp.dest(this.settings.buildPath));
 	}

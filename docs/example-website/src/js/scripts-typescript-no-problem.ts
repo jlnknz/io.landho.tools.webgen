@@ -4,20 +4,27 @@
 // - qa:js			No problem
 // - scripts:app	No problem, concatenated in aggregated JS
 
-// import c2 = require("chai");
+// const c2 = require("chai");
 // import c from "chai"; // // FIXME import in typescript still a mess. does not work. read ts doc
 
 class TypeScriptNoProblem {
 
-	constructor(public greeting: string)
+	constructor() /* public greeting: string */
 	{
 	}
 
-	public greet()
+	/*public greet()
 	{
 		return "<h1>" + this.greeting + "</h1>";
 	}
+	*/
 
 }
 
-let typeScriptNoProblem = new TypeScriptNoProblem("Hello, typescript without problems!");
+let typeScriptNoProblem = new TypeScriptNoProblem();
+
+/*
+class Caca {
+
+}
+	*/
