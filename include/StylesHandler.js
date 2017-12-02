@@ -80,7 +80,7 @@ class StylesHandler {
 						Utils.assert(Array.isArray(this.sets[s].options.sassIncludePaths), 'sassIncludePaths is not an array');
 						this.sets[s].options.sassIncludePaths =
 							this.sets[s].options.sassIncludePaths
-								.map((p) => path.resolve(this.settings.root + '/' + p));
+								.map((p) => path.resolve(this.settings.sourceRoot + '/' + p));
 					}
 				}
 			}

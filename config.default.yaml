@@ -123,6 +123,8 @@ styles:
     # By defining sets, we specify which group of files should be processed and concatenated as a single output
     # style file.
     #
+    # All paths relative to sourcePathRoot
+    #
     # For each set:
     # - the key is the output filename
     # - the value is an object consisting of:
@@ -136,13 +138,11 @@ styles:
             input:
                 - '**/*.{scss,css}'
                 - '!**/_*.scss'
-                - '!contrib/**'
             watch:
                 - '**/*.{scss,css}'
-                - '!contrib/**'
             # options:
             #   sassIncludePaths:
-            #       - 'path/relative/to/root/of/project/'
+            #       - 'path/relative/to/sourcePathRoot/of/project/'
             #       - 'a/second/path/to/include/'
 
     filesToLint:
@@ -169,13 +169,12 @@ scripts:
     # options: noTransform (which will tell to simply concat files without further transformation) and noLicense
     # (which tells not to add our custom license)
     #
-    # By default we exclude the contrib/ directory.
+    # All paths relative to sourcePathRoot
     sets:
         app.js:
             input:
                 - '**/*.ts'
                 - '**/*.js'
-                - '!contrib/**'
         #    watch:
         #        # - '**/*.ts'
         #        - '**/*.js'
