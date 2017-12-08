@@ -156,7 +156,7 @@ class ScriptsHandler {
 					.pipe(this._processJavascript(outputFilename, options)())
 					.on('error', function (ev)
 					{
-						console.log(ev);
+						console.err(ev);
 					})
 					// add the license
 					.pipe(tap(

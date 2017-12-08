@@ -347,10 +347,7 @@ class Configuration {
 	enableReleaseMode()
 	{
 		this.settings.isRelease = true;
-
 		this._adaptBuildTarget();
-
-		console.log('enable log');
 		return this._callOnReleaseFlagChange();
 	}
 

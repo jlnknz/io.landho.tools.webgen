@@ -167,13 +167,13 @@ class Utils {
 		}
 
 		if (isLazyPipe) {
-			console.log('return lazypipe', name);
+			console.debug('return lazypipe', name);
 			return ret;
 		}
 		else {
 			return () =>
 			{
-				console.log('return promise', name);
+				console.debug('return promise', name);
 				initialResolve();
 				return ret;
 			};

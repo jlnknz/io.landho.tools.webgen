@@ -231,7 +231,6 @@ class WebGenGulp {
 				gulp.watch(this.config.source,
 					(event) =>
 					{
-						console.log('whaaa');
 						// apparently if directories are created in the build directory, this watch is triggered.
 						// FIXME I don't understand why
 						if (event.type === 'changed') {
@@ -259,7 +258,6 @@ class WebGenGulp {
 				// same logic as for styles
 				this.scripts.doOnAllSets((set) =>
 				{
-					console.log(set.watch);
 					gulp.watch(set.watch, () => this.scripts.process(set));
 				});
 
@@ -269,7 +267,6 @@ class WebGenGulp {
 				// watch additional files and rebuild everything if they are touched
 				gulp.watch(this.config.settings.additionallyWatchedFiles, (event) =>
 					{
-						console.log('restart');
 						// apparently if directories are created in the build directory, this watch is triggered.
 						// FIXME I don't understand why
 						// same problem as above when watching config file

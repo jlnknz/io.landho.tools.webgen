@@ -8,7 +8,7 @@ function javaScriptFunctionWithWarnings() {
 	var a = 42;
 	b = 42 + a;
 	if (a = 1) {
-		console.log('out warnings js')
+		console.info('out warnings js')
 	}
 }
 
