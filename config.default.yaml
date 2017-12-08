@@ -237,6 +237,9 @@ i18n:
     # Source of the CSV file containing translations, relative to this configuration file
     source: 'i18n.csv'
 
+    # If true, add debug classes to generated HTML for strings that are lacking translation
+    debug: true
+
     # Labels for language switcher menu
     # You may for example want to add languages or reorder them
     labels:

@@ -35,6 +35,7 @@ class I18nHelper {
 			Utils.assert(this.settings.i18n.fallbackLanguage, 'No fallback language specified.');
 			Utils.assert(this.settings.i18n.labels, 'No translations for i18n labels have been defined.');
 			Utils.assert(typeof this.settings.i18n.labels === 'object', 'Translations for i18n labels that have been defined is not an object.');
+			Utils.assert(this.settings.i18n.debug !== null, 'No debug value for i18n.');
 		});
 
 		// finish object configuration
@@ -194,7 +195,7 @@ class I18nHelper {
 									Utils.warn('i18n', originalPath, `Also no translation for the fallback language |${this.settings.i18n.fallbackLanguage}|.`);
 									missingTranslationClass += ' i18n-no-language-fallback'
 								}
-								if (this.settings.isRelease) {
+								if (this.settings.isRelease || !this.settings.i18n.debug) {
 									if (!translation) {
 										translation = source;
 									}
