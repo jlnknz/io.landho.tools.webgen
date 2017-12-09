@@ -131,8 +131,6 @@ styles:
     #   - input: file matchers array defining which files should be taken as input
     #   - watch: (optional) file matchers array defining which elements should be watched for changes and that would
     #              trigger the regeneration of the set. If watch is not present, the value of input will be sued.
-    #   - options: (optional) an array of options. For now only the 'sassIncludePaths' property is supported. It
-    #              consists of an array of paths relative to the root of the project.
     sets:
         app.css:
             input:
@@ -140,10 +138,6 @@ styles:
                 - '!**/_*.scss'
             watch:
                 - '**/*.{scss,css}'
-            # options:
-            #   sassIncludePaths:
-            #       - 'path/relative/to/sourcePathRoot/of/project/'
-            #       - 'a/second/path/to/include/'
 
     filesToLint:
         - '**/*.{scss,css}'

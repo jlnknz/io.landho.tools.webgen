@@ -75,13 +75,6 @@ class StylesHandler {
 					}
 
 					this.sets[s].options = this.settings.styles.sets[s].options || {};
-					// sass includePaths options is always relative to the root of the project
-					if (this.sets[s].options.sassIncludePaths) {
-						Utils.assert(Array.isArray(this.sets[s].options.sassIncludePaths), 'sassIncludePaths is not an array');
-						this.sets[s].options.sassIncludePaths =
-							this.sets[s].options.sassIncludePaths
-								.map((p) => path.resolve(this.settings.sourceRoot + '/' + p));
-					}
 				}
 			}
 		});
@@ -147,9 +140,6 @@ class StylesHandler {
 		let inputFilesMatchers = set.input;
 		let outputFilename = set.output;
 		let sassOptions = {};
-		if (set.options.sassIncludePaths) {
-			sassOptions.includePaths = set.options.sassIncludePaths;
-		}
 
 		let oldOutputFilenames = this.settings.buildPath + '/' + outputFilename.replace(/(\.[^.]+)$/, '.*$1');
 		let toRemove = [
