@@ -567,6 +567,13 @@ class ContentsHandler {
 	{
 		let _self = this;
 
+		handlebars.registerHelper('passthrough', function (str)
+		{
+			return new handlebars.SafeString(
+				'<no-typo>' + str + '</no-typo>'
+			);
+		});
+
 		// Helper to render raw structures as their JSON representation
 		handlebars.registerHelper('json', function (obj)
 		{

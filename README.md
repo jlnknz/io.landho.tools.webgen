@@ -105,6 +105,8 @@ ncu -u
 
 ## Next developments
 
+- FIXME replace gulp-util which is deprecated
+
 - should I use karma? Review test - also with angular, using its testbed.
 	https://github.com/karma-runner/gulp-karma
 	mocha or jasmine dependency should be in built project, not in webgen
