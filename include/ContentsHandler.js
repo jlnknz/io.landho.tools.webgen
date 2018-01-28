@@ -762,6 +762,12 @@ class ContentsHandler {
 			}
 		);
 
+		// Helper to render raw structures as their JSON representation
+		handlebars.registerHelper('passthrough', function (obj)
+		{
+			return new handlebars.SafeString(obj);
+		});
+
 		// register partials
 		// NOTE: partials are just strings. they NEVER contain something generated at runtime
 		for (let partialName in this.settings.content.partials) {
