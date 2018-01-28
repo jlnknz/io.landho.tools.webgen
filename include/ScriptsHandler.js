@@ -45,8 +45,7 @@ class ScriptsHandler {
 		this.sets = {};
 
 		// check that the configuration is valid for this module
-		config.onLoad(() =>
-		{
+		config.onLoad(() => {
 			Utils.assert(this.settings.scripts, 'No configuration section for scripts.');
 			Utils.assert(this.settings.scripts.sets, 'No sets defined for scripts.');
 			Utils.assert(typeof this.settings.scripts.sets === 'object', 'Sets for scripts in not an object.');
@@ -119,10 +118,8 @@ class ScriptsHandler {
 	processAllSets()
 	{
 		return this.doOnAllSets(
-			(set) =>
-			{
-				return new Promise((resolve) =>
-				{
+			(set) => {
+				return new Promise((resolve) => {
 					return this.process(set)
 						.on('end', resolve());
 				});
@@ -147,21 +144,18 @@ class ScriptsHandler {
 			oldOutputFilenames + '.map'
 		];
 		return del(toRemove)
-			.then(() =>
-			{
+			.then(() => {
 				return gulp.src(inputFilesMatchers)
 					.pipe(plumber())
 					.pipe(!this.settings.isRelease ? sourcemaps.init() : noop())
 					// and then handle javascript
 					.pipe(this._processJavascript(outputFilename, options)())
-					.on('error', function (ev)
-					{
-						console.err(ev);
+					.on('error', function (ev) {
+						console.error(outputFilename, options, ev);
 					})
 					// add the license
 					.pipe(tap(
-						(file) =>
-						{
+						(file) => {
 							if (this.settings.licenseTemplateFile && this.settings.isRelease && !options.noLicense) {
 								let input = file.contents.toString();
 								let l = this.utils.getLicense("/*\n", "\n */\n", ' * ', file);
@@ -208,8 +202,7 @@ class ScriptsHandler {
 				fix: false
 			}))
 			.pipe(eslint.format())
-			.pipe(eslint.results(results =>
-			{
+			.pipe(eslint.results(results => {
 				// Called once for all ESLint results.
 				console.info(`Total Results: ${results.length}`);
 				console.info(`Total Warnings: ${results.warningCount}`);
@@ -229,11 +222,11 @@ class ScriptsHandler {
 		};
 		return gulp.src(this.settings.scripts.unitTests)
 		// FIXME does not work for now
-	/*	.pipe(typescript({
-		 noImplicitAny: true,
-		 target: "es6",
-		 allowJs: true
-		 })) */
+		/*	.pipe(typescript({
+			 noImplicitAny: true,
+			 target: "es6",
+			 allowJs: true
+			 })) */
 			.pipe(mocha(config));
 	}
 
@@ -248,13 +241,11 @@ class ScriptsHandler {
 			.pipe(concat, outputFilename)
 			// browserify with babelify transform if no noTransform setting
 			.pipe(
-				() =>
-				{
+				() => {
 					return gulpIf(
 						!options.noTransform,
 						through2(
-							(file, enc, next) =>
-							{
+							(file, enc, next) => {
 								// we have already concat() the files, but let's move to the original file path
 								// such that relative references to other modules are still good
 								let originalDirPath = path.dirname(file.history[0]);
@@ -265,22 +256,21 @@ class ScriptsHandler {
 										basedir: originalDirPath
 									}
 								)
-									.plugin(tsify, // FIXME is that ok to transpile even though we have js as input? to check.
+								/*	.plugin(tsify, // FIXME is that ok to transpile even though we have js as input? to check.
 										{
 											noImplicitAny: true,
 											target: 'es6'
 										}
+									) */
+									.transform('babelify',
+										require(
+											this.settings.scripts.babelConfig.startsWith('/')
+												? this.settings.toolsRoot + this.settings.scripts.babelConfig
+												: this.settings.root + '/' + this.settings.scripts.babelConfig
+										)
 									)
-									/*	.transform('babelify',
-									 require(
-									 this.settings.scripts.babelConfig.startsWith('/')
-									 ? this.settings.toolsRoot + this.settings.scripts.babelConfig
-									 : this.settings.root + '/' + this.settings.scripts.babelConfig
-									 )
-									 )
-									 */
-									.bundle((err, res) =>
-									{
+
+									.bundle((err, res) => {
 										if (err) {
 											return next(err);
 										}
@@ -295,8 +285,7 @@ class ScriptsHandler {
 			)
 			// uglify
 			.pipe(
-				() =>
-				{
+				() => {
 					return gulpIf(
 						this.settings.isRelease,
 						uglify()
@@ -306,8 +295,7 @@ class ScriptsHandler {
 			// rename to final name
 			.pipe(rename, {suffix: this.settings.buildAssetsSuffix})
 			.pipe(
-				() =>
-				{
+				() => {
 					return gulpIf(
 						!this.settings.isRelease,
 						sourcemaps.write('.')

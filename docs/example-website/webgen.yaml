@@ -12,7 +12,7 @@ scripts:
     sets:
         app.js:
             input:
-                - '**/*.ts'
+        #        - '**/*.ts'
                 - '**/*.js'
         vendors.js:
             input:
