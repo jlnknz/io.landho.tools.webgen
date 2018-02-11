@@ -576,7 +576,7 @@ class ContentsHandler {
 
 		handlebars.registerHelper('stripHtml', function (str)
 		{
-			return str.replace(/(<([^>]+)>)/ig,"");
+			return str.replace(/<([^>]+)>/g,"");
 		});
 
 		// Helper to render raw structures as their JSON representation
