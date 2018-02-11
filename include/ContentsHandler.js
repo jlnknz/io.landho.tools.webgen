@@ -574,6 +574,11 @@ class ContentsHandler {
 			);
 		});
 
+		handlebars.registerHelper('stripHtml', function (str)
+		{
+			return str.replace(/(<([^>]+)>)/ig,"");
+		});
+
 		// Helper to render raw structures as their JSON representation
 		handlebars.registerHelper('json', function (obj)
 		{
