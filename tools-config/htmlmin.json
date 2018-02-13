@@ -1,5 +1,6 @@
 {
 	"removeComments": true,
 	"collapseWhitespace": true,
-	"collapseBooleanAttributes": true
+	"collapseBooleanAttributes": true,
+	"processScripts": ["text/template"]
 }
