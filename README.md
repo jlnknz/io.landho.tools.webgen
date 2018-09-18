@@ -204,7 +204,8 @@ content, and then move the tags back in place. Can be quite slow, but the result
 - what should linter do? fail and crash, or fail and succeed. For now:
 scss: fail if error
 
-
+- Included files (with include-file helper) are not watched. We should add 
+  a parameter to define a list of alternate files to watch
 
 
 

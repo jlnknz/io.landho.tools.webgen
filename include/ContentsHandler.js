@@ -54,8 +54,7 @@ class ContentsHandler {
 		this.xmlSitemapHelper = new XmlSitemapHelper(config);
 
 		// check that the configuration is valid for this module
-		config.onLoad(() =>
-		{
+		config.onLoad(() => {
 			Utils.assert(this.settings.content, 'No configuration section for contents.');
 			Utils.assert(this.settings.content.input, 'No input filter for template contents.');
 			Utils.assert(this.settings.content.htmlLintConfig, 'No configuration for HTML linter.');
@@ -109,12 +108,9 @@ class ContentsHandler {
 		});
 
 		// Load path helper - this returns a promise, which will be waited upon at the end of Configuration.load()
-		config.onLoad(() =>
-		{
-			return new Promise((resolve) =>
-			{
-				this._initBaseContext().then(() =>
-				{
+		config.onLoad(() => {
+			return new Promise((resolve) => {
+				this._initBaseContext().then(() => {
 					this._initHandlebars();
 					this.pathHelper = new PathHelper(config, this.baseContext);
 					resolve();
@@ -174,15 +170,13 @@ class ContentsHandler {
 		}
 		input = input.concat(this.settings.content.input);
 		let extractedStrings = {};
-		let p = new Promise((resolve) =>
-		{
+		let p = new Promise((resolve) => {
 			gulp.src(input)
 				.pipe(plumber())
 				.pipe(this.i18nHelper.extractI18nProcessor(extractedStrings)())
 				.on('end', resolve);
 		});
-		return p.then(() =>
-		{
+		return p.then(() => {
 			return Utils.createEmptyStream(this.settings.i18n.source)
 				.pipe(this.i18nHelper.buildI18nSourceFileProcessor(extractedStrings)())
 				.pipe(gulp.dest('.'));
@@ -214,11 +208,9 @@ class ContentsHandler {
 	{
 		return lazypipe()
 		// replace dots in build ids with '_' (dots are not accepted by gulp-html-replace)
-			.pipe(tap, (file) =>
-			{
+			.pipe(tap, (file) => {
 				let input = file.contents.toString();
-				input = input.replace(/<!--\s+build:([0-9a-zA-Z_.-]+)\s+-->/gm, (all, buildId) =>
-				{
+				input = input.replace(/<!--\s+build:([0-9a-zA-Z_.-]+)\s+-->/gm, (all, buildId) => {
 					buildId = buildId.replace('.', '_');
 					return `<!-- build:${buildId} -->`;
 				});
@@ -236,8 +228,7 @@ class ContentsHandler {
 	{
 		return lazypipe()
 			.pipe(tap,
-				(file) =>
-				{
+				(file) => {
 					if (this.settings.licenseTemplateFile && this.settings.isRelease) {
 						// add the license
 						let input = file.contents.toString();
@@ -266,7 +257,7 @@ class ContentsHandler {
 	{
 		return lazypipe()
 			.pipe(this.utils.runHooks('beforeHtmlRender'))
-		// perform translations
+			// perform translations
 			.pipe(this.i18nHelper.getI18nProcessor())
 			// correct typography
 			.pipe(this.typoHelper.getTypoProcessor())
@@ -276,8 +267,7 @@ class ContentsHandler {
 			.pipe(this.pathHelper.correctContentPathsProcessor())
 			// minify content
 			.pipe(
-				() =>
-				{
+				() => {
 					return gulpIf(
 						(this.settings.isRelease) && (this.settings.content.minifyHtmlConfig !== false),
 						htmlmin(require(this.settings.content.minifyHtmlConfig))
@@ -287,8 +277,7 @@ class ContentsHandler {
 			.pipe(this._getXmlLicenseProcessor())
 			// and make the code pretty
 			.pipe(
-				() =>
-				{
+				() => {
 					return gulpIf(
 						!this.settings.isRelease,
 						prettify({indent_char: '\t', indent_size: 1})
@@ -330,8 +319,7 @@ class ContentsHandler {
 
 		return lazypipe()
 			.pipe(this.utils.runHooks('beforeApplyTemplate'))
-			.pipe(through2, function (file, enc, cb)
-			{
+			.pipe(through2, function (file, enc, cb) {
 				let pipe = this;
 
 				// Create a context that is relevant for the currently examined content
@@ -478,12 +466,10 @@ class ContentsHandler {
 		// the keys of the baseContent.contents array are the paths for accessing the content. We store the same
 		// information to both the original path and the target paths
 		return new Promise(
-			(resolve) =>
-			{
+			(resolve) => {
 				gulp.src(this.settings.content.input)
 					.on('end',
-						() =>
-						{
+						() => {
 							this.baseContext = baseCtx;
 							Object.freeze(this.baseContext);
 							resolve(baseCtx);
@@ -491,8 +477,7 @@ class ContentsHandler {
 					)
 					.pipe(plumber())
 					.pipe(through2(
-						(file, enc, cb) =>
-						{
+						(file, enc, cb) => {
 							let conf = this._acquireYamlConfig(file);
 
 							// template for the content context
@@ -567,21 +552,18 @@ class ContentsHandler {
 	{
 		let _self = this;
 
-		handlebars.registerHelper('passthrough', function (str)
-		{
+		handlebars.registerHelper('passthrough', function (str) {
 			return new handlebars.SafeString(
 				'<no-typo>' + str + '</no-typo>'
 			);
 		});
 
-		handlebars.registerHelper('stripHtml', function (str)
-		{
-			return str.replace(/<([^>]+)>/g,"");
+		handlebars.registerHelper('stripHtml', function (str) {
+			return str.replace(/<([^>]+)>/g, "");
 		});
 
 		// Helper to render raw structures as their JSON representation
-		handlebars.registerHelper('json', function (obj)
-		{
+		handlebars.registerHelper('json', function (obj) {
 			return new handlebars.SafeString(
 				'<no-typo><pre>'
 				+ JSON.stringify(obj, null, 2)
@@ -601,8 +583,7 @@ class ContentsHandler {
 		// {{get-path "content-plain-html-multilang-paths.html"}}
 		// {{get-path "content-plain-html-multilang-paths.html" lang="de"}}
 		handlebars.registerHelper('get-path',
-			(path, options) =>
-			{
+			(path, options) => {
 				// language: if not specified, use the language of the currently processed content
 				let targetLang =
 					(options.hash.lang ? handlebars.escapeExpression(options.hash.lang) : this.lang)
@@ -631,8 +612,7 @@ class ContentsHandler {
 		// is returned by default. The 'style' parameter can be either 'native', 'current' and 'short'. If a 'context'
 		// parameter is passed, it should be set to the content context of the currently processed content.
 		handlebars.registerHelper('get-language-label',
-			function (requestedLanguage, options)
-			{
+			function (requestedLanguage, options) {
 				let style = options.hash.style ? options.hash.style : 'native';
 				let context = options.hash.context ? options.hash.context : this;
 				let currentLanguage = context.lang ? context.lang : _self.settings.i18n.fallbackLanguage;
@@ -663,8 +643,7 @@ class ContentsHandler {
 		// We can also pass a target path to this function, but it is better practice to
 		// provide it with a source path
 		handlebars.registerHelper('foreach-language',
-			function (path, options)
-			{
+			function (path, options) {
 				let languages = [];
 				let context = this;
 				if (context.translationSet) {
@@ -681,11 +660,11 @@ class ContentsHandler {
 				let ret = '';
 				for (let i = 0; i < languages.length; i++) {
 					ret = ret + options.fn({
-							lang: languages[i],
-							first: i === 0,
-							last: (i === languages.length - 1),
-							classes: context.classes
-						});
+						lang: languages[i],
+						first: i === 0,
+						last: (i === languages.length - 1),
+						classes: context.classes
+					});
 				}
 				return ret;
 			}
@@ -698,8 +677,7 @@ class ContentsHandler {
 		// We can also pass a target path to this function, but it is better practice to
 		// provide it with a source path
 		handlebars.registerHelper('get-title',
-			(path, options) =>
-			{
+			(path, options) => {
 				let context = this.baseContext.contents[path];
 				let short = !!options.hash.short;
 				let ret;
@@ -717,8 +695,7 @@ class ContentsHandler {
 		// Get helper class names for menu items
 		// Used by menu.hbs partial
 		handlebars.registerHelper('get-menu-item-classes',
-			(isFirst, isLast, currentPath, itemPath, children) =>
-			{
+			(isFirst, isLast, currentPath, itemPath, children) => {
 				currentPath = this._getSourcePath(currentPath);
 
 				let classes = [];
@@ -743,8 +720,7 @@ class ContentsHandler {
 		// Tells whether we must expand the menu
 		// Used by menu.hbs partial
 		handlebars.registerHelper('if-must-expand-menu',
-			function (expandPolicy, children, currentPath, currentItemId, options)
-			{
+			function (expandPolicy, children, currentPath, currentItemId, options) {
 				currentPath = _self._getSourcePath(currentPath);
 
 				if (!children) {
@@ -768,9 +744,29 @@ class ContentsHandler {
 		);
 
 		// Helper to render raw structures as their JSON representation
-		handlebars.registerHelper('passthrough', function (obj)
-		{
+		handlebars.registerHelper('passthrough', function (obj) {
 			return new handlebars.SafeString(obj);
+		});
+
+		// Helper to include files
+		handlebars.registerHelper('include-file', function (file) {
+			// files with path starting with / are relative to the toolsRoot.
+			// Others are relative to the this.settings.root
+			if (file.startsWith('/')) {
+				file = _self.settings.toolsRoot + file;
+			}
+			else {
+				file = _self.settings.sourceRoot + '/' + file;
+			}
+
+			let ret;
+			try {
+				ret = fs.readFileSync(file, {encoding: 'utf-8'});
+			}
+			catch (e) {
+				throw `Cannot read include file |${file}|`;
+			}
+			return new handlebars.SafeString(ret);
 		});
 
 		// register partials
@@ -927,8 +923,7 @@ class ContentsHandler {
 			if (items.hasOwnProperty(menuName)) {
 				res[menuName] = [];
 				// array
-				items[menuName].forEach((item) =>
-				{
+				items[menuName].forEach((item) => {
 					if (typeof item === 'string') {
 						// ok, simple node.
 						res[menuName].push({id: item});
