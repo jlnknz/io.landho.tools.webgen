@@ -244,10 +244,17 @@ class Utils {
 	 */
 	static warn(...messages)
 	{
-		let last = messages.pop().replace(/\|([^|]*?)\|/g, function (all, content)
-		{
-			return '|' + gutil.colors.blue(content) + '|';
-		});
+		let last = messages.pop();
+		if (last.replace) {
+			last = last.replace(/\|([^|]*?)\|/g, function (all, content)
+			{
+				return '|' + gutil.colors.blue(content) + '|';
+			});
+		}
+		else {
+			gutil.log('raw message: ', last);
+			last = '';
+		}
 		messages = messages.map((m) => '[' + gutil.colors.magenta(m) + ']');
 		gutil.log(gutil.colors.yellow('WARNING'), ...messages, last);
 	}
