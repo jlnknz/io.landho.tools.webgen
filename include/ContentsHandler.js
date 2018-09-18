@@ -766,6 +766,49 @@ class ContentsHandler {
 			catch (e) {
 				throw `Cannot read include file |${file}|`;
 			}
+
+			// if we have a handlebar file, do compile and template the content
+			// such that the current context (this) can be used in the included file
+			let context = this;
+			if (file.endsWith('.hbs')) {
+				let tpl = handlebars.compile(ret);
+				// create a partial for the content
+				try {
+					ret = tpl(context);
+				}
+				catch (e) {
+					Utils.warn('content', `Exception when rendering content template.`, e);
+				}
+			}
+			else {
+				if (file.endsWith('.md')) {
+					marked.setOptions({
+						sanitize: false
+					});
+					ret = marked(content);
+				}
+				// other file types, e.g. plain HTML
+
+				// fake handlebars processor
+				// replace some of the values we have in the content context, but do not run a real
+				// handlebars processor as it may be dangerous ??? - but it would make all features availalble
+				// into HTML/md files too. Is this something we want? FIXME not sure... to be thought of.
+				/*
+				 let templateContent = handlebars.compile(content);
+				 try {
+				 content = templateContent(contentContext);
+				 }
+				 catch (e) {
+				 Utils.warn('content', `[${contentConfig.reference}] Exception when rendering content template (HTML/md).`, e);
+				 }
+				 */
+				ret = ret.replace(/\{\{title}}/g, context.title)
+					.replace(/\{\{shortTitle}}/g, context.shortTitle)
+					.replace(/\{\{rootUrl}}/g, context.rootUrl)
+					.replace(/\{\{canonicalUrl}}/g, context.canonicalUrl)
+					.replace(/\{\{lang}}/g, context.lang);
+			}
+
 			return new handlebars.SafeString(ret);
 		});
 
@@ -785,7 +828,12 @@ class ContentsHandler {
 			}
 		}
 	}
-
+	/*
+	_applyTemplateProcessing(context)
+	{
+		return ret;
+	}
+*/
 	/**
 	 * Tells whether the provided path is part of the provided menu children (any depth)
 	 *

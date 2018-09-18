@@ -206,10 +206,6 @@ scss: fail if error
 
 - Included files (with include-file helper) are not watched. We should add 
   a parameter to define a list of alternate files to watch
-  workaround: put the includes into content/include/whatever.hbs
-  the default input for content does not take subdirectories into account
-  (that would actually break the paths if we did that)
-
 
 
 ------
