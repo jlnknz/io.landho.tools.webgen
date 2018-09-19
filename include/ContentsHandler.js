@@ -712,7 +712,7 @@ class ContentsHandler {
 		});
 
 		// Helper to include files
-		handlebars.registerHelper('include-file', function (file) {
+		handlebars.registerHelper('include-file', function (file, options) {
 			// files with path starting with / are relative to the toolsRoot.
 			// Others are relative to the this.settings.root
 			if (file.startsWith('/')) {
@@ -730,9 +730,12 @@ class ContentsHandler {
 				throw `Cannot read include file |${file}|`;
 			}
 
+			let context = {...this};
+			Object.assign(context.more, options.hash);
+
 			// if we have a handlebar file, do compile and template the content
 			// such that the current context (this) can be used in the included file
-			ret = _self._applyTemplateProcessing(file, ret, this);
+			ret = _self._applyTemplateProcessing(file, ret, context);
 			return new handlebars.SafeString(ret);
 		});
 
