@@ -290,6 +290,12 @@ content:
         - '*.html'
         - '*.php'
 
+    # Which additional content files should be watched?
+    # We can define a string or an array of strings here
+    # Paths are relative to sourcePathRoot
+    # Especially useful if you use include-file helper in your content files
+    watchMore: false
+
     # Partials-related settings
     # Relative to toolsRoot if starts with / (built-in), relative to the sourcePathRoot otherwise.
     partials:

@@ -96,7 +96,7 @@ class ContentsHandler {
 			// XML sitemap default
 			Utils.assert(
 				this.settings.content.xmlsitemap === false || typeof this.settings.content.xmlsitemap === 'object',
-				'No configuration for XML sitemap.'
+				'No configuration for XML site map.'
 			);
 			if (this.settings.content.xmlsitemap) {
 				Utils.assert(this.settings.content.xmlsitemap.defaultPriority, 'No default priority for XML sitemap.');
@@ -104,6 +104,9 @@ class ContentsHandler {
 			}
 
 			// finalize configuration
+			this.settings.content.input = this.utils.filterBuildPath(this.settings.content.input);
+			let more = this.settings.content.watchMore ? this.settings.content.watchMore : [];
+			this.settings.content.contentToWatch = this.utils.filterBuildPath(more.concat(this.settings.content.input));
 			this.settings.content.input = this.utils.filterBuildPath(this.settings.content.input);
 		});
 

@@ -262,7 +262,7 @@ class WebGenGulp {
 				});
 
 				// contents
-				gulp.watch(this.config.settings.content.input, ['content', 'xmlsitemap']);
+				gulp.watch(this.config.settings.content.contentToWatch, ['content', 'xmlsitemap']);
 
 				// watch additional files and rebuild everything if they are touched
 				gulp.watch(this.config.settings.additionallyWatchedFiles, (event) =>
