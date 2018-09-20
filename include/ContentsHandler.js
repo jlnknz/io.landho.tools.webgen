@@ -106,6 +106,9 @@ class ContentsHandler {
 			// finalize configuration
 			this.settings.content.input = this.utils.filterBuildPath(this.settings.content.input);
 			let more = this.settings.content.watchMore ? this.settings.content.watchMore : [];
+			if (typeof more === 'string') {
+				more = [more];
+			}
 			this.settings.content.contentToWatch = this.utils.filterBuildPath(more.concat(this.settings.content.input));
 			this.settings.content.input = this.utils.filterBuildPath(this.settings.content.input);
 		});
