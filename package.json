@@ -10,6 +10,7 @@
     "babelify": "^8.0.0",
     "browser-sync": "^2.18.13",
     "browserify": "^14.5.0",
+    "connect-history-api-fallback": "^1.5.0",
     "csvjson": "^5.0.0",
     "del": "^3.0.0",
     "express": "^4.16.2",

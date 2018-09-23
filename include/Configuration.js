@@ -184,8 +184,7 @@ class Configuration {
 		customConf.bowerComponentsPath = customConf.root + (bowerConfig.directory || 'bower_components');
 
 		// we must wait for the configuration object to be ready before finalizing configuration
-		this.onLoad(() =>
-		{
+		this.onLoad(() => {
 			this.utils = new Utils(this);
 			this.settings.additionallyWatchedFiles = this.utils.filterBuildPath(this.settings.additionallyWatchedFiles);
 		});
@@ -197,39 +196,48 @@ class Configuration {
 
 		// Some paths are relative to a hard-coded path, so let's make them relative to the root
 		customConf.content.input.map(
-			(v, i) =>
-			{
+			(v, i) => {
 				customConf.content.input[i] = customConf.sourceRoot + 'contents/' + v;
 			}
 		);
 
 		// init a browser-sync instance
 		if (customConf.browserSync) {
-			customConf.browserSync = {
-				config: customConf.browserSync
-			};
-		}
-		else {
-			customConf.browserSync = {
-				config: {
-					// will be set in _adaptBuildTarget()
-					server: customConf.browserSync !== false
+			customConf.browserSync.config = {};
+
+			if (customConf.browserSync.proxy) {
+				customConf.browserSync.config.server = false;
+				customConf.browserSync.config.proxy = customConf.browserSync.proxy;
+			}
+			else {
+				// it does not make sense to 'serve' a server for releases
+				// so we force the path to the dev build path
+				customConf.browserSync.config.server = {
+					baseDir: path.resolve(
+						customConf.root
+						+ customConf.buildPathRoot
+						+ (customConf.browserSync.baseDir ? customConf.browserSync.baseDir : './build-dev/')
+					)
+				};
+
+				// onePageDesign - load the history-api-fallback middleware
+				if (customConf.browserSync.onePageDesign) {
+					const historyApiFallback = require('connect-history-api-fallback');
+					customConf.browserSync.config.server.middleware = [historyApiFallback()];
 				}
-			};
+			}
 		}
 		customConf.browserSync.instance = browserSync.create(customConf.buildRandomNumber);
 
 		// setup hooks
-		this.onLoad(() =>
-		{
+		this.onLoad(() => {
 			if (this.settings.hooks) {
 				if (!Array.isArray(this.settings.hooks)) {
 					this.settings.hooks = [this.settings.hooks];
 				}
 				this.settings.hooks =
 					this.settings.hooks
-						.map((c) =>
-						{
+						.map((c) => {
 							let f = this.settings.toolsRoot;
 							if (!c.startsWith('/')) {
 								f = this.settings.sourceRoot;
@@ -297,16 +305,13 @@ class Configuration {
 				promises.push(r);
 			}
 		}
-		return new Promise((resolve) =>
-		{
+		return new Promise((resolve) => {
 			Promise.all(promises)
-				.then(() =>
-				{
+				.then(() => {
 					// hooks for end of configuration
 					return this.utils.runHooks('afterConfigurationLoading', this.settings)();
 				})
-				.then(() =>
-				{
+				.then(() => {
 					// mark configuration as loaded
 					this.isLoaded = true;
 
@@ -331,11 +336,9 @@ class Configuration {
 				promises.push(r);
 			}
 		}
-		return new Promise((resolve) =>
-		{
+		return new Promise((resolve) => {
 			Promise.all(promises)
-				.then(() =>
-				{
+				.then(() => {
 					resolve();
 				})
 		});
@@ -388,8 +391,7 @@ class Configuration {
 		// let the system know which CSS and JS files must be included in HTML
 		this.settings.htmlReplaceConfig = {};
 		['styles', 'scripts'].forEach(
-			(what) =>
-			{
+			(what) => {
 				let sets = this.settings[what].sets;
 
 				for (let set in sets) {
@@ -400,14 +402,6 @@ class Configuration {
 				}
 			}
 		);
-
-		// update browserSync server
-		if (this.settings.browserSync
-			&& this.settings.browserSync.config
-			&& this.settings.browserSync.config.server
-		) {
-			this.settings.browserSync.config.server = this.settings.buildPath;
-		}
 	}
 
 	/**

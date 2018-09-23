@@ -194,8 +194,8 @@ class WebGenGulp {
 			{
 				runSequence(
 					['config:release'],
-		// FIXME fails sequence even if no error			['qa'],
-			 		['build']
+					// FIXME fails sequence even if no error			['qa'],
+					['build']
 				)
 			})
 		);

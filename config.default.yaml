@@ -347,10 +347,15 @@ content:
 #
 # To completely disable BrowserSync, set 'browserSync' to false
 
-# browserSync:
+browserSync:
 
-#   # Attach to Apache process: set 'server' to false and set 'proxy' to the appropriate value.
-#   proxy: 'localhost:8080'
+    # Alter the baseDir if needed. Relative to the buildPathRoot
+    baseDir: './build-dev/'
 
-#   # change the start path (defaults to /)
-#   startPath: my-app.html
+    # By default, we enable a middleware component that will handle following links of one-page-design web sites
+    onePageDesign: true
+
+    # we can override the baseDir config and use a proxy instead, e.g. a running Apache instance
+    # if set, the 'server' property of the browser-sync config will be set to false
+    # proxy: 'localhost:8080'
+
