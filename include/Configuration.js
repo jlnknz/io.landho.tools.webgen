@@ -234,7 +234,12 @@ class Configuration {
 					customConf.browserSync.commands = [customConf.browserSync.commands];
 				}
 				customConf.browserSync.config.open = false;
-				customConf.browserSync.config._commands = customConf.browserSync.commands;
+				customConf.browserSync.config._commands = customConf.browserSync.commands.map(
+					c => c.replace(
+						/\$RANDOM/g,
+						() => 100000 + Math.floor(Math.random() * Math.floor(899999))
+					)
+				);
 			}
 		}
 		customConf.browserSync.instance = browserSync.create(customConf.buildRandomNumber);
