@@ -226,6 +226,16 @@ class Configuration {
 					customConf.browserSync.config.server.middleware = [historyApiFallback()];
 				}
 			}
+
+			// if the default browser is not used, run some command provided in the 'commands'
+			customConf.browserSync.config._commands = [];
+			if (customConf.browserSync.commands) {
+				if (typeof customConf.browserSync.commands === 'string') {
+					customConf.browserSync.commands = [customConf.browserSync.commands];
+				}
+				customConf.browserSync.config.open = false;
+				customConf.browserSync.config._commands = customConf.browserSync.commands;
+			}
 		}
 		customConf.browserSync.instance = browserSync.create(customConf.buildRandomNumber);
 
@@ -286,9 +296,22 @@ class Configuration {
 		Utils.assert(this.settings.buildPath, 'Build path is not set.');
 		Utils.assert(this.settings.isRelease === false, 'Release flag not set to false (it may be altered later).');
 		Utils.assert(this.settings.browserSync, 'No BrowserSync configuration');
+		if (this.settings.browserSync.config._commands) {
+			this.settings.browserSync.config._commands.forEach((value) => {
+				Utils.assert(typeof value === 'string', 'Invalid command for browser-sync:' + value);
+			});
+		}
+		if (this.settings.browserSync.proxy) {
+			Utils.assert(typeof this.settings.browserSync.proxy === 'string', 'Invalid proxy setting for browser-sync');
+		}
+		if (this.settings.browserSync.baseDir) {
+			Utils.assert(typeof this.settings.browserSync.baseDir === 'string', 'Invalid baseDir setting for browser-sync');
+		}
+		Utils.assert(typeof this.settings.browserSync.onePageDesign === 'boolean', 'Invalid onePageDesign setting for browser-sync.');
 		Utils.assert(this.settings.browserSync.instance.stream(), 'No BrowserSync stream available.');
 		Utils.assert(this.settings.buildAssetsSuffix !== undefined, 'No build suffix defined.');
 		Utils.assert(this.settings.bowerComponentsPath !== undefined, 'No bower components path.');
+
 	}
 
 	/**

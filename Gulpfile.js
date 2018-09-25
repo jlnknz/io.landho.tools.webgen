@@ -104,8 +104,7 @@ class WebGenGulp {
 
 
 		// Cleaning
-		gulp.task('clean:build-dir', (c) =>
-		{
+		gulp.task('clean:build-dir', (c) => {
 			return this.configCallbacksReady.then(() => this.cleaner.cleanBuildDir());
 		});
 		gulp.task('clean', ['clean:build-dir']);
@@ -136,8 +135,7 @@ class WebGenGulp {
 		gulp.task('qa:styles', (c) => this.configCallbacksReady.then(() => this.styles.lint()));
 
 		// QA scripts
-		gulp.task('qa:lint-js', (c) =>
-		{
+		gulp.task('qa:lint-js', (c) => {
 			this.configCallbacksReady.then(() =>
 				this.scripts.lintJavaScript().on('finish', () => c())
 			);
@@ -153,8 +151,7 @@ class WebGenGulp {
 		 });
 		 */
 		gulp.task('qa:lint-scripts', [/* FIXME disabled 'qa:lint-ts', */'qa:lint-js']);
-		gulp.task('qa:unit-tests-scripts', (c) =>
-		{
+		gulp.task('qa:unit-tests-scripts', (c) => {
 			this.configCallbacksReady.then(() =>
 				this.scripts.runUnitTests().on('finish', () => c())
 			);
@@ -162,8 +159,7 @@ class WebGenGulp {
 		gulp.task('qa:scripts', ['qa:lint-scripts', 'qa:unit-tests-scripts']);
 
 		// QA contents
-		gulp.task('qa:content', (c) =>
-		{
+		gulp.task('qa:content', (c) => {
 			this.configCallbacksReady.then(() =>
 				this.contents.lintContents().on('finish', () => c())
 			);
@@ -179,10 +175,8 @@ class WebGenGulp {
 		);
 
 		// change release flag to true
-		gulp.task('config:release', (c) =>
-		{
-			this.configCallbacksReady.then(() =>
-				{
+		gulp.task('config:release', (c) => {
+			this.configCallbacksReady.then(() => {
 					this.config.enableReleaseMode();
 					c();
 				}
@@ -190,8 +184,7 @@ class WebGenGulp {
 		});
 
 		// build a release
-		gulp.task('release', () => this.configCallbacksReady.then(() =>
-			{
+		gulp.task('release', () => this.configCallbacksReady.then(() => {
 				runSequence(
 					['config:release'],
 					// FIXME fails sequence even if no error			['qa'],
@@ -204,13 +197,11 @@ class WebGenGulp {
 		gulp.task(
 			'watch:run-unit-tests',
 			// 	['qa:unit-tests-scripts'], // if enabled, kills the process??? FIXME
-			() => this.configCallbacksReady.then(() =>
-			{
+			() => this.configCallbacksReady.then(() => {
 				this.scripts.runUnitTests(); // execute first run because of failure in run dependency (FIXME 2 lines above)
 
 				// FIXME cannot simply call ['qa:unit-tests-js'] because of mocha called in same process? to check why.
-				gulp.watch(this.config.settings.scripts.unitTests, (c) =>
-				{
+				gulp.watch(this.config.settings.scripts.unitTests, (c) => {
 					this.scripts.runUnitTests().on('finish', () => c());
 				});
 			})
@@ -221,16 +212,14 @@ class WebGenGulp {
 		gulp.task(
 			'watch:build',
 			['build'],
-			() => this.configCallbacksReady.then(() =>
-			{
+			() => this.configCallbacksReady.then(() => {
 				// FIXME not triggered if newfile, but ok if delete OR modif
 				// if create directory -> ok, if delete dir, not ok
 				// if delete directory full of files, not ok
 				gulp.watch(this.config.settings.buildPath + '/**').on('change', () => this.utils.reloadBrowserOnChange());
 				// exit if we modify the configuration file
 				gulp.watch(this.config.source,
-					(event) =>
-					{
+					(event) => {
 						// apparently if directories are created in the build directory, this watch is triggered.
 						// FIXME I don't understand why
 						if (event.type === 'changed') {
@@ -256,8 +245,7 @@ class WebGenGulp {
 
 				// scripts
 				// same logic as for styles
-				this.scripts.doOnAllSets((set) =>
-				{
+				this.scripts.doOnAllSets((set) => {
 					gulp.watch(set.watch, () => this.scripts.process(set));
 				});
 
@@ -265,8 +253,7 @@ class WebGenGulp {
 				gulp.watch(this.config.settings.content.contentToWatch, ['content', 'xmlsitemap']);
 
 				// watch additional files and rebuild everything if they are touched
-				gulp.watch(this.config.settings.additionallyWatchedFiles, (event) =>
-					{
+				gulp.watch(this.config.settings.additionallyWatchedFiles, (event) => {
 						// apparently if directories are created in the build directory, this watch is triggered.
 						// FIXME I don't understand why
 						// same problem as above when watching config file
@@ -286,9 +273,17 @@ class WebGenGulp {
 		gulp.task(
 			'serve',
 			['watch:build'],
-			() => this.configCallbacksReady.then(() =>
-			{
-				this.config.settings.browserSync.instance.init(this.config.settings.browserSync.config);
+			() => this.configCallbacksReady.then(() => {
+				let config = this.config.settings.browserSync.config;
+				this.config.settings.browserSync.instance.init(
+					config,
+					function (err, bs) {
+						const opn = require('opn');
+						config._commands.forEach((value) => {
+							let appParts = value.split(/\s+/);
+							opn(bs.options.getIn(['urls', 'local']), {app: appParts});
+						});
+					});
 			})
 		);
 

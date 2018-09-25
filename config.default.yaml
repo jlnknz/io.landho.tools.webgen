@@ -358,4 +358,9 @@ browserSync:
     # we can override the baseDir config and use a proxy instead, e.g. a running Apache instance
     # if set, the 'server' property of the browser-sync config will be set to false
     # proxy: 'localhost:8080'
+    proxy: false
 
+    # If set, the default browser will be run and the specified commands will be executed (with 'opn')
+    # this can be a string or an array of strings. In the later case, each command will be run on load
+    # commands: 'chromium-browser --incognito'
+    commands: false
