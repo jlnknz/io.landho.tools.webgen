@@ -712,6 +712,11 @@ class ContentsHandler {
 			}
 		);
 
+		// helper to compare two values
+		handlebars.registerHelper('if-equal', function(a, b, options) {
+			return a == b ? options.fn(this) : options.inverse(this);
+		});
+
 		// Helper to render raw structures as their JSON representation
 		handlebars.registerHelper('passthrough', function (obj) {
 			return new handlebars.SafeString(obj);
