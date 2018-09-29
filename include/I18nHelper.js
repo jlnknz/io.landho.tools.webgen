@@ -63,6 +63,36 @@ class I18nHelper {
 	}
 
 	/**
+	 * Get a translation, and if it cannot be found, add debug/warning information
+	 */
+	getTranslationOrWarn(source, lang, originalPath)
+	{
+		let translation = this.getTranslation(source, lang);
+		if (!translation) {
+			let missingTranslationClass = 'i18n-missing-translation';
+			Utils.warn('i18n', originalPath, `Cannot find translation for |${source}| in |${lang}|. Falling back to fallback language |${this.settings.i18n.fallbackLanguage}|.`);
+			translation = this.getTranslation(source, this.settings.i18n.fallbackLanguage);
+			if (translation) {
+				missingTranslationClass += ' i18n-is-language-fallback';
+			}
+			else {
+				Utils.warn('i18n', originalPath, `Also no translation for the fallback language |${this.settings.i18n.fallbackLanguage}|.`);
+				missingTranslationClass += ' i18n-no-language-fallback'
+			}
+			if (this.settings.isRelease || !this.settings.i18n.debug) {
+				if (!translation) {
+					translation = source;
+				}
+			}
+			else {
+				translation = '<span class="webgen-debug webgen-error i18n-error '
+					+ missingTranslationClass + '">' + source + '</span>';
+			}
+		}
+		return translation;
+	}
+
+	/**
 	 * Extract i18n strings from and update the config.i18n.source file according to the result
 	 */
 	extractI18nProcessor(extractedStrings)
@@ -183,28 +213,7 @@ class I18nHelper {
 						source = source.replace(/\n/mg, ' ').replace(/([\s]+)/mg, ' ').trim();
 						let translation;
 						if (lang) {
-							translation = this.getTranslation(source, lang);
-							if (!translation) {
-								let missingTranslationClass = 'i18n-missing-translation';
-								Utils.warn('i18n', originalPath, `Cannot find translation for |${source}| in |${lang}|. Falling back to fallback language |${this.settings.i18n.fallbackLanguage}|.`);
-								translation = this.getTranslation(source, this.settings.i18n.fallbackLanguage);
-								if (translation) {
-									missingTranslationClass += ' i18n-is-language-fallback';
-								}
-								else {
-									Utils.warn('i18n', originalPath, `Also no translation for the fallback language |${this.settings.i18n.fallbackLanguage}|.`);
-									missingTranslationClass += ' i18n-no-language-fallback'
-								}
-								if (this.settings.isRelease || !this.settings.i18n.debug) {
-									if (!translation) {
-										translation = source;
-									}
-								}
-								else {
-									translation = '<span class="webgen-debug webgen-error i18n-error '
-										+ missingTranslationClass + '">' + source + '</span>';
-								}
-							}
+							translation = this.getTranslationOrWarn(source ,lang, originalPath);
 						}
 						else {
 							translation = source;

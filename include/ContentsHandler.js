@@ -540,6 +540,13 @@ class ContentsHandler {
 			);
 		});
 
+		// translate a string
+		handlebars.registerHelper('i18n',
+			function (what) {
+				return _self.i18nHelper.getTranslationOrWarn(what, this.lang, this.reference);
+			}
+		);
+
 		// Handlebars helper: get the path for the specified path, in the target language specified as an option
 		// No need for passing a context.
 		//
@@ -716,7 +723,7 @@ class ContentsHandler {
 		handlebars.registerHelper('if-equal', function(a, b, options) {
 			return a == b ? options.fn(this) : options.inverse(this);
 		});
-		
+
 		// Helper to include files
 		handlebars.registerHelper('include-file', function (file, options) {
 			// files with path starting with / are relative to the toolsRoot.
