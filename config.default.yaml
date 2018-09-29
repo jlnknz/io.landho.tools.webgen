@@ -234,6 +234,9 @@ i18n:
     # If true, add debug classes to generated HTML for strings that are lacking translation
     debug: true
 
+    # IF true, we won't output i18n warnings in the console
+    silentLog: false
+
     # Labels for language switcher menu
     # You may for example want to add languages or reorder them
     labels:

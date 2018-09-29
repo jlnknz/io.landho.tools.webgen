@@ -36,6 +36,7 @@ class I18nHelper {
 			Utils.assert(this.settings.i18n.labels, 'No translations for i18n labels have been defined.');
 			Utils.assert(typeof this.settings.i18n.labels === 'object', 'Translations for i18n labels that have been defined is not an object.');
 			Utils.assert(this.settings.i18n.debug !== null, 'No debug value for i18n.');
+			Utils.assert(typeof this.settings.i18n.silentLog === 'boolean', 'No translation source file.');
 		});
 
 		// finish object configuration
@@ -70,13 +71,17 @@ class I18nHelper {
 		let translation = this.getTranslation(source, lang);
 		if (!translation) {
 			let missingTranslationClass = 'i18n-missing-translation';
-			Utils.warn('i18n', originalPath, `Cannot find translation for |${source}| in |${lang}|. Falling back to fallback language |${this.settings.i18n.fallbackLanguage}|.`);
+			if (!this.settings.i18n.silentLog) {
+				Utils.warn('i18n', originalPath, `Cannot find translation for |${source}| in |${lang}|. Falling back to fallback language |${this.settings.i18n.fallbackLanguage}|.`);
+			}
 			translation = this.getTranslation(source, this.settings.i18n.fallbackLanguage);
 			if (translation) {
 				missingTranslationClass += ' i18n-is-language-fallback';
 			}
 			else {
-				Utils.warn('i18n', originalPath, `Also no translation for the fallback language |${this.settings.i18n.fallbackLanguage}|.`);
+				if (!this.settings.i18n.silentLog) {
+					Utils.warn('i18n', originalPath, `Also no translation for the fallback language |${this.settings.i18n.fallbackLanguage}|.`);
+				}
 				missingTranslationClass += ' i18n-no-language-fallback'
 			}
 			if (this.settings.isRelease || !this.settings.i18n.debug) {
