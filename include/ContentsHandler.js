@@ -521,16 +521,21 @@ class ContentsHandler {
 	{
 		let _self = this;
 
+		// passthrough without typo improvements
 		handlebars.registerHelper('passthrough', function (str) {
 			return new handlebars.SafeString(
 				'<no-typo>' + str + '</no-typo>'
 			);
 		});
 
+		// remove html tags
 		handlebars.registerHelper('stripHtml', function (str) {
 			return str.replace(/<([^>]+)>/g, "");
 		});
 
+		// concat strings
+		handlebars.registerHelper('concat', (...args) => args.slice(0, -1).join(''));
+		
 		// Helper to render raw structures as their JSON representation
 		handlebars.registerHelper('json', function (obj) {
 			return new handlebars.SafeString(
