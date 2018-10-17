@@ -535,7 +535,7 @@ class ContentsHandler {
 
 		// concat strings
 		handlebars.registerHelper('concat', (...args) => args.slice(0, -1).join(''));
-		
+
 		// Helper to render raw structures as their JSON representation
 		handlebars.registerHelper('json', function (obj) {
 			return new handlebars.SafeString(
