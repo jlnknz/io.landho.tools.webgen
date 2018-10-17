@@ -721,11 +721,11 @@ class ContentsHandler {
 
 		// helpers to compare two values
 		handlebars.registerHelper('if-equal', function(a, b, options) {
-			return a == b ? options.fn(this) : options.inverse(this);
+			return a === b ? options.fn(this) : options.inverse(this);
 		});
 
 		handlebars.registerHelper('unless-equal', function(a, b, options) {
-			return a != b ? options.fn(this) : options.inverse(this);
+			return a !== b ? options.fn(this) : options.inverse(this);
 		});
 
 		// Helper to include files
