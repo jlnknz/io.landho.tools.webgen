@@ -155,6 +155,21 @@ class Configuration {
 		customConf.isRelease = false;
 		customConf.appName = pkg.name ? pkg.name : customConf.appName;
 		customConf.appVersion = pkg.version ? pkg.version : customConf.appVersion;
+		// FIXME load generator package.json
+		// import package.json (if exists)
+		let genPkg;
+		try {
+			// this file is in include/, so package.json is in the parent dir
+			genPkg = require('../package.json');
+		}
+		catch (err) {
+			throw 'Missing generator package file.';
+		}
+		if (!genPkg.name || !genPkg.version) {
+			throw 'Missing generator name or version';
+		}
+		customConf.generatorName = genPkg.name;
+		customConf.generatorVersion = genPkg.version;
 		customConf.author = pkg.author ? pkg.author : customConf.author;
 		customConf.buildDateTime = new Date().toISOString().slice(0, -5) + 'Z';
 		customConf.buildUser = process.env['USER'];

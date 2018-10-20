@@ -108,7 +108,7 @@ class Utils {
 		let res;
 		try {
 			res = licenseTemplate({
-				app: this.settings,
+				app: this.getExposedAppVariables(),
 				file: file
 			});
 		}
@@ -295,6 +295,31 @@ class Utils {
 	}
 
 
+	/**
+	 * Get variables from settings that are acceptable as being exposed
+	 * This function is to be called at the time of usage of the variables, 
+	 * as some variables may be changed after initial configuration 
+	 * (for now only isRelease has this behavior)
+	 */
+	getExposedAppVariables()
+	{
+		const toKeep = [
+			'author',
+			'isRelease',
+			'buildDateTime',
+			'buildUser',
+			'rootUrl',
+			'appName',
+			'appVersion',
+			'generatorName',
+			'generatorVersion'
+		];
+		let appVars = {};
+		toKeep.forEach((v) => {
+			appVars[v] = typeof this.settings[v] !== 'undefined' ? this.settings[v] : '';
+		});
+		return appVars;
+	}
 }
 
 /**

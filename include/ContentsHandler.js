@@ -337,7 +337,10 @@ class ContentsHandler {
 
 				let contentContext = {
 					currentPath: file.relative,
-					menus: merge.recursive(true, {}, _self.baseContext.menus)
+					menus: merge.recursive(true, {}, _self.baseContext.menus),
+					// app variables
+					// we set them here as some of them may vary over time (specifically only isRelease)
+					app: _self.utils.getExposedAppVariables()
 				};
 
 				handlebars.Utils.extend(contentContext, contentConfig);
