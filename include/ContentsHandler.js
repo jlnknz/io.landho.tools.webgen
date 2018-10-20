@@ -548,6 +548,39 @@ class ContentsHandler {
 			);
 		});
 
+		/*
+		 * Facility to have counters in the handlebar templates
+		 *
+		 * counter identifier "init" start=1?
+		 * counter identifier "increment" value=1?
+		 * counter identifier "get" override?
+		 *
+		 * if override is set, it will be returned instead of the counter value
+		 */
+		handlebars.registerHelper('counter', function (which, operation, third) {
+			if (!this.counters) {
+				this.counters = {};
+			}
+			if (!this.counters[which]) {
+				this.counters[which] = 0;
+			}
+			let isThirdObject = typeof third === 'object' && typeof third.hash === 'object';
+			// create variable
+			switch (operation) {
+				case 'init':
+					third = isThirdObject ? 1 : third;
+					this.counters[which] = third;
+					break;
+				case 'increment':
+					third = isThirdObject ? 1 : third;
+					this.counters[which] += third;
+					break;
+				case 'get':
+				default:
+					return isThirdObject || typeof third === 'undefined' ? this.counters[which] : third;
+			}
+		});
+
 		// translate a string
 		handlebars.registerHelper('i18n',
 			function (what) {
