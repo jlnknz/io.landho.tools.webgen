@@ -5,7 +5,7 @@
   "main": "webgen.js",
   "dependencies": {
     "ajv": "^6.10.2",
-    "babel-core": "^6.26.0",
+    "babel-core": "^7.0.0",
     "babel-preset-env": "^1.6.1",
     "babelify": "^10.0.0",
     "browser-sync": "^2.18.13",
