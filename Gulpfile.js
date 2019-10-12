@@ -237,8 +237,8 @@ class WebGenGulp {
 				// does not delete existing files, which is acceptable
 				// FIXME does not work: add new file
 				// 		works: rename, delete (but does not remove), add dir
-				gulp.watch(this.config.settings.assets.input, ['assets']);
-				gulp.watch(this.config.settings.images.input, ['images']);
+				gulp.watch(this.config.settings.assets.input, gulp.series('assets'));
+				gulp.watch(this.config.settings.images.input, gulp.series('images'));
 
 				// styles
 				// by creating one watch per set, we avoid having to re-compile all styles every time we change
@@ -254,7 +254,7 @@ class WebGenGulp {
 				});
 
 				// contents
-				gulp.watch(this.config.settings.content.contentToWatch, ['content', 'xmlsitemap']);
+				gulp.watch(this.config.settings.content.contentToWatch, gulp.series('content', 'xmlsitemap'));
 
 				// watch additional files and rebuild everything if they are touched
 				gulp.watch(this.config.settings.additionallyWatchedFiles, (event) => {
