@@ -100,14 +100,14 @@ class WebGenGulp {
 	{
 		// Documentation
 		gulp.task('help', () => Help.synopsis());
-		gulp.task('default', ['help']);
+		gulp.task('default', gulp.series('help'));
 
 
 		// Cleaning
 		gulp.task('clean:build-dir', (c) => {
 			return this.configCallbacksReady.then(() => this.cleaner.cleanBuildDir());
 		});
-		gulp.task('clean', ['clean:build-dir']);
+		gulp.task('clean', gulp.series('clean:build-dir'));
 
 
 		// extract i18n strings
@@ -150,13 +150,13 @@ class WebGenGulp {
 		 );
 		 });
 		 */
-		gulp.task('qa:lint-scripts', [/* FIXME disabled 'qa:lint-ts', */'qa:lint-js']);
+		gulp.task('qa:lint-scripts', gulp.series(/* FIXME disabled 'qa:lint-ts', */'qa:lint-js'));
 		gulp.task('qa:unit-tests-scripts', (c) => {
 			this.configCallbacksReady.then(() =>
 				this.scripts.runUnitTests().on('finish', () => c())
 			);
 		});
-		gulp.task('qa:scripts', ['qa:lint-scripts', 'qa:unit-tests-scripts']);
+		gulp.task('qa:scripts', gulp.parallel('qa:lint-scripts', 'qa:unit-tests-scripts'));
 
 		// QA contents
 		gulp.task('qa:content', (c) => {
@@ -165,13 +165,13 @@ class WebGenGulp {
 			);
 		});
 
-		gulp.task('qa', ['qa:styles', 'qa:scripts', 'qa:content']);
+		gulp.task('qa', gulp.parallel('qa:styles', 'qa:scripts', 'qa:content'));
 
 		// Build task, re-using build sub tasks, after having checked the QA of the project.
 		// In release mode, the script will fail if the QA task fails.
 		gulp.task(
 			'build',
-			['assets', 'images', 'styles', 'scripts', 'content', 'xmlsitemap']
+			gulp.series(gulp.parallel('assets', 'images', 'styles', 'scripts', 'content'), 'xmlsitemap')
 		);
 
 		// change release flag to true
@@ -211,8 +211,9 @@ class WebGenGulp {
 		// FIXME quite buggy, but let's wait for gulp 4 before refactoring.
 		gulp.task(
 			'watch:build',
-			['build'],
-			() => this.configCallbacksReady.then(() => {
+			gulp.series(
+				'build',
+				() => this.configCallbacksReady.then(() => {
 				// FIXME not triggered if newfile, but ok if delete OR modif
 				// if create directory -> ok, if delete dir, not ok
 				// if delete directory full of files, not ok
@@ -267,13 +268,15 @@ class WebGenGulp {
 					}
 				);
 			})
+			)
 		);
 
 		// Open a browser-sync-enabled server
 		gulp.task(
 			'serve',
-			['watch:build'],
-			() => this.configCallbacksReady.then(() => {
+			gulp.series(
+				'watch:build',
+				() => this.configCallbacksReady.then(() => {
 				let config = this.config.settings.browserSync.config;
 				this.config.settings.browserSync.instance.init(
 					config,
@@ -285,6 +288,7 @@ class WebGenGulp {
 						});
 					});
 			})
+			)
 		);
 
 	}
