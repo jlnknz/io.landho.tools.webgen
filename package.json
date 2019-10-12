@@ -72,7 +72,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "webgen": "webgen.js"
+    "webgen": "webgen.sh"
   },
   "author": "Julien Künzi <jlnknz@landho.io>",
   "license": "GPLv3",

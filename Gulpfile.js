@@ -99,12 +99,15 @@ class WebGenGulp {
 	_setupTasks()
 	{
 		// Documentation
-		gulp.task('help', () => Help.synopsis());
+		gulp.task('help', (done) => {
+			Help.synopsis();
+			done();
+		});
 		gulp.task('default', gulp.series('help'));
 
 
 		// Cleaning
-		gulp.task('clean:build-dir', (c) => {
+		gulp.task('clean:build-dir', () => {
 			return this.configCallbacksReady.then(() => this.cleaner.cleanBuildDir());
 		});
 		gulp.task('clean', gulp.series('clean:build-dir'));
@@ -132,7 +135,7 @@ class WebGenGulp {
 		gulp.task('xmlsitemap', () => this.configCallbacksReady.then(() => this.contents.generateXmlSitemap()));
 
 		// QA styles
-		gulp.task('qa:styles', (c) => this.configCallbacksReady.then(() => this.styles.lint()));
+		gulp.task('qa:styles', () => this.configCallbacksReady.then(() => this.styles.lint()));
 
 		// QA scripts
 		gulp.task('qa:lint-js', (c) => {
@@ -152,7 +155,7 @@ class WebGenGulp {
 		 */
 		gulp.task('qa:lint-scripts', gulp.series(/* FIXME disabled 'qa:lint-ts', */'qa:lint-js'));
 		gulp.task('qa:unit-tests-scripts', (c) => {
-			this.configCallbacksReady.then(() =>
+			return this.configCallbacksReady.then(() =>
 				this.scripts.runUnitTests().on('finish', () => c())
 			);
 		});
@@ -160,7 +163,7 @@ class WebGenGulp {
 
 		// QA contents
 		gulp.task('qa:content', (c) => {
-			this.configCallbacksReady.then(() =>
+			return his.configCallbacksReady.then(() =>
 				this.contents.lintContents().on('finish', () => c())
 			);
 		});
@@ -176,7 +179,7 @@ class WebGenGulp {
 
 		// change release flag to true
 		gulp.task('config:release', (c) => {
-			this.configCallbacksReady.then(() => {
+			return this.configCallbacksReady.then(() => {
 					this.config.enableReleaseMode();
 					c();
 				}

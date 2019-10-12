@@ -20,6 +20,8 @@ See LICENSE for more information.
 **** requirements you would expect for building your website.
 **** You should rather use another existing solutions.
 **** 
+**** Also, it is very possible this script will never be improved 
+**** anymore.
 ````
 
 ## Description
@@ -158,7 +160,7 @@ ncu -u
 - RULE: we do NOT babelify our code for internal use. User is expected to use environment that supports latest features, 
 such as es6. However, we DO babelify the output such that app can be used by anyone.
 
-- angular2
+- angular2+
 - unit tests
 	- PHP => ?
 	
@@ -239,3 +241,6 @@ hooks implementation to check. to sure it works
 
 -------------
 scripts does not work. related to ts?
+
+----------
+gulp 4 migration: did it quick and dirty for now.
