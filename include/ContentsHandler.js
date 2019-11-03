@@ -533,6 +533,9 @@ class ContentsHandler {
 
 		// remove html tags
 		handlebars.registerHelper('stripHtml', function (str) {
+			if (!str) {
+				return '';
+			}
 			return str.replace(/<([^>]+)>/g, "");
 		});
 
