@@ -21,7 +21,6 @@
  * Load modules
  */
 const gulp = require('gulp');
-const runSequence = require('run-sequence');
 const Configuration = require('./include/Configuration');
 const Utils = require('./include/Utils');
 const Help = require('./include/Help');
@@ -187,13 +186,10 @@ class WebGenGulp {
 		});
 
 		// build a release
-		gulp.task('release', () => this.configCallbacksReady.then(() => {
-				runSequence(
-					['config:release'],
-					// FIXME fails sequence even if no error			['qa'],
-					['build']
-				)
-			})
+		gulp.task('release',gulp.series(
+			'config:release', // FIXME no qa
+			'build'
+			)
 		);
 
 		// Watching of unit tests
@@ -262,11 +258,7 @@ class WebGenGulp {
 						// FIXME I don't understand why
 						// same problem as above when watching config file
 						if (event.type === 'changed') {
-							return runSequence(
-								['clean:build-dir'], // FIXME clean makes things fail. Try with simpler task.
-								// or try to wait for a few seconds before resolve. but i think it's rather caused by promise returning troo early
-								['build']
-							);
+							return gulp.series('clean:build-dir', 'build');
 						}
 					}
 				);
